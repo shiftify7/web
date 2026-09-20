@@ -1,0 +1,40 @@
+{
+  "from": "delhi",
+  "to": "mumbai",
+  "distanceKm": 1420,
+  "transitDays": [
+    3,
+    4
+  ],
+  "modes": [
+    "dedicated-truck",
+    "shared-load",
+    "car-carrier"
+  ],
+  "tollsAndPermits": "The NH48 corridor (Delhi–Jaipur–Udaipur–Vadodara–Surat–Mumbai) crosses Haryana, Rajasthan, Gujarat and Maharashtra. National permit, state entry formalities at check posts, and the intercity toll chain — including the Mumbai entry tolls — are listed as separate transparent lines in the quote, plus the GST e-way bill our ops team generates for the consignment.",
+  "faqs": [
+    {
+      "q": "How long does a Delhi to Mumbai move take?",
+      "a": "A dedicated truck typically delivers in 3–4 days door to door: loading day, two full transit days on NH48, and delivery. Shared-load consignments can run a day or two longer because the truck completes a planned route — the mode you choose is stated in the quote with its realistic delivery window."
+    },
+    {
+      "q": "Should I pick a dedicated truck or shared load on this corridor?",
+      "a": "Dedicated makes sense from a full 2 BHK upward: your goods are the only consignment, loaded once and sealed. For 1 RK and 1 BHK inventories, a shared load cuts cost meaningfully in exchange for a wider delivery window — your goods are still packed, inventoried and handled by the same standards."
+    },
+    {
+      "q": "Can my car travel with my household goods from Delhi to Mumbai?",
+      "a": "The car moves separately on a car carrier with its own condition report at pickup and delivery; bikes are crated and can ride with the household consignment. Combining them saves duplicate logistics costs — both options are priced as distinct lines in your quote."
+    },
+    {
+      "q": "What insurance applies on a Delhi–Mumbai move?",
+      "a": "Transit insurance is offered on declared value with written terms covering what is and isn't claimable; the quote explains both the cover and the claims process. High-value items like electronics and glass should be declared explicitly before loading."
+    },
+    {
+      "q": "How do Delhi's no-entry rules affect a Mumbai-bound move?",
+      "a": "Loading in Delhi is scheduled inside the legal window for goods vehicles on your road — typically early morning or midday. The Mumbai delivery end plans around society permitted hours. Both constraints are named in your written schedule."
+    }
+  ],
+  "notes": "This is the busiest long-haul corridor on our map. The run follows NH48 through Jaipur, Udaipur, Vadodara and Surat; trucks typically break the journey after night one around the Gujarat belt. Two details decide a smooth Delhi–Mumbai move: loading must beat Delhi's peak no-entry windows, and delivery into Mumbai must respect society move hours — a truck reaching Thane at 6 p.m. may wait until the next morning's window. Monsoon adds a further variable on the Surat–Mumbai stretch between June and September.",
+  "metaTitle": "Delhi to Mumbai Packers and Movers — Cost & Time | Shiftify",
+  "metaDescription": "Packers and movers from Delhi to Mumbai. Free survey, written itemised quote, no advance. Transit time, modes and process explained."
+}

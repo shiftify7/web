@@ -1,0 +1,19 @@
+# dependencies / build
+node_modules/
+dist/
+.astro/
+
+# env & secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# Lighthouse CI
+.lighthouseci/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json

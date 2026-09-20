@@ -1,0 +1,28 @@
+---
+import { waLink, waMessageFor } from '@/consts';
+import Icon from './Icon.astro';
+
+/** WhatsApp CTA with prefilled, context-aware message. Falls back to /contact/ until the number is real. */
+interface Props {
+  city?: string;
+  route?: { from: string; to: string };
+  label?: string;
+  class?: string;
+  variant?: 'default' | 'ghost' | 'outline-w' | 'white';
+  size?: 'md' | 'lg';
+}
+const { city, route, label = 'WhatsApp Us', class: cls = '', variant, size } = Astro.props;
+const href = waLink(waMessageFor({ city, route })) || '/contact/';
+const variantCls = variant === 'ghost' ? 'btn--ghost' : variant === 'outline-w' ? 'btn--outline-w' : variant === 'white' ? 'btn--white' : '';
+const sizeCls = size === 'lg' ? 'btn--lg' : '';
+---
+<a
+  href={href}
+  class={`btn ${variantCls} ${sizeCls} ${cls}`.trim()}
+  data-event="whatsapp_click"
+  data-event-city={city}
+  {...href.startsWith('https://wa.me/') ? { target: '_blank', rel: 'noopener' } : {}}
+>
+  <Icon name="wa" size={18} />
+  {label}
+</a>

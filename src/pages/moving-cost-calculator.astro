@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import QuoteEstimator from '@/components/islands/QuoteEstimator';
+import { calculatorProps } from '@/lib/calc';
+import { breadcrumbSchema } from '@/lib/schema';
+import { SITE } from '@/consts';
+
+const calc = await calculatorProps();
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Moving Cost Calculator', path: '/moving-cost-calculator/' }];
+---
+<BaseLayout
+  title="Moving Cost Calculator India — Instant Estimate | Shiftify"
+  description="Estimate your packers and movers cost in 30 seconds: pick cities, home size, date and add-ons — a deterministic indicative range, then one tap to WhatsApp."
+  canonicalPath="/moving-cost-calculator/"
+  jsonLd={[breadcrumbSchema(crumbs)]}
+  quoteHref="#quote"
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="calc-head">
+        <Breadcrumbs items={crumbs} />
+        <h1>Moving cost calculator</h1>
+        <p class="lead">Four quick steps, one honest range. The maths runs on your device against a single pricing configuration — no login, no spam, and the estimate you see is what you'd get again with the same answers.</p>
+      </div>
+      <div class="calc-box card">
+        <QuoteEstimator client:load cities={calc.cities} routes={calc.routes} waNumber={SITE.whatsappIntl} headline="Estimate your moving cost" />
+      </div>
+      <div class="method">
+        <h2>How the estimate is computed</h2>
+        <ul>
+          <li><strong>Deterministic.</strong> A fixed pricing configuration (base price per home size, per-km rate, flat add-on charges) always gives the same answer for the same inputs.</li>
+          <li><strong>Known corridor?</strong> If your from→to matches a published route, its dataset distance is used.</li>
+          <li><strong>New route?</strong> Straight-line distance between the cities' dataset coordinates × road factor — never a maps API, never an invented number.</li>
+          <li><strong>Same city?</strong> Local-move base prices apply, no distance charge.</li>
+          <li><strong>Add-ons</strong> (packing, unpacking, fragile handling, vehicle transport, storage) add their flat configured charges.</li>
+          <li><strong>A range, not a promise.</strong> The result is shown as ± a configured spread around the computed base.</li>
+        </ul>
+        <p class="fine">Ranges are indicative and assume standard packing. What actually moves the final price: inventory volume, floor/lift access, packing grade and move date. The written quote after survey is the firm number.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .calc-head { margin: 14px 0 22px; }
+  h1 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); letter-spacing: -0.03em; margin: 14px 0 10px; }
+  .lead { color: var(--color-slate-500); font-size: 0.95rem; max-width: 66ch; }
+  .calc-box { max-width: 640px; margin-inline: auto; padding: clamp(20px, 3vw, 30px); }
+  .method { max-width: 720px; margin: 34px auto 0; }
+  .method h2 { font-size: 1.02rem; margin-bottom: 10px; }
+  .method ul { list-style: square; padding-left: 1.3em; color: var(--color-slate-500); font-size: 0.9rem; display: grid; gap: 8px; }
+  .method strong { color: var(--color-ink-900); }
+  .fine { font-size: 0.82rem; color: var(--color-slate-400); margin-top: 12px; }
+</style>

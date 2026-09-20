@@ -1,0 +1,61 @@
+---
+/**
+ * Inline SVG icons — stroke style adapted from Lucide's geometry (ISC).
+ * No icon font, no runtime library. Usage: <Icon name="box" class="..." />
+ */
+interface Props {
+  name:
+    | 'wa' | 'phone' | 'mail' | 'arrow' | 'check' | 'plus' | 'pin' | 'cal'
+    | 'shield' | 'shield-check' | 'receipt' | 'clock' | 'box' | 'info'
+    | 'chev' | 'truck' | 'home' | 'bldg' | 'ware' | 'car' | 'route'
+    | 'star' | 'menu' | 'x' | 'globe' | 'user' | 'external' | 'file';
+  class?: string;
+  size?: number;
+}
+const { name, class: cls = '', size = 20 } = Astro.props;
+
+const P: Record<string, string> = {
+  wa: `<path fill="currentColor" stroke="none" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.85 9.85 0 0 0 12.04 2Zm5.8 14.02c-.24.68-1.41 1.3-1.94 1.35-.53.05-1.03.24-3.48-.73-2.95-1.16-4.8-4.22-4.95-4.41-.14-.2-1.17-1.56-1.17-2.98 0-1.41.74-2.11 1-2.4.27-.29.58-.36.78-.36h.56c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.15.12.32.02.51-.1.2-.15.32-.29.49-.15.17-.31.39-.44.52-.15.14-.3.3-.13.59.17.29.75 1.24 1.61 2.01 1.11.99 2.04 1.3 2.33 1.44.29.15.46.12.63-.07.17-.2.73-.85.92-1.14.2-.29.39-.24.66-.15.27.1 1.69.8 1.98.94.29.15.48.22.55.34.07.12.07.7-.17 1.38Z"/>`,
+  phone: `<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/>`,
+  mail: `<rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/>`,
+  arrow: `<path d="M4 12h15M13 5.5 19.5 12 13 18.5"/>`,
+  check: `<path d="m20 6.5-11 11-5-5"/>`,
+  plus: `<path d="M12 5v14M5 12h14"/>`,
+  pin: `<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/>`,
+  cal: `<rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/>`,
+  shield: `<path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1Z"/>`,
+  'shield-check': `<path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2.2 2.2 4.3-4.5"/>`,
+  receipt: `<path d="M4.5 2.5v19l2.4-1.4 2.4 1.4 2.7-1.4 2.7 1.4 2.4-1.4 2.4 1.4v-19Z"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/>`,
+  clock: `<circle cx="12" cy="12" r="9.5"/><path d="M12 7v5.5l3.5 2"/>`,
+  box: `<path d="M21 8.2a2 2 0 0 0-1-1.73l-7-4.04a2 2 0 0 0-2 0L4 6.47A2 2 0 0 0 3 8.2v7.6a2 2 0 0 0 1 1.73l7 4.04a2 2 0 0 0 2 0l7-4.04a2 2 0 0 0 1-1.73Z"/><path d="m3.3 7.1 8.7 5 8.7-5M12 22.1V12.1"/>`,
+  info: `<circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.2v.4"/>`,
+  chev: `<path d="m9 5.5 6.5 6.5L9 18.5"/>`,
+  truck: `<path d="M14 17H7V8h11v4h3l1 2.5V17h-2"/><circle cx="9.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/><path d="M2.5 10.5H7M1.5 13H7"/>`,
+  home: `<path d="M3 10.4 12 3l9 7.4"/><path d="M5.2 8.9V21h13.6V8.9"/><path d="M10 21v-6h4v6"/>`,
+  bldg: `<rect x="4.5" y="3" width="15" height="19"/><path d="M8.5 7h2M13.5 7h2M8.5 11h2M13.5 11h2M8.5 15h2M13.5 15h2M10.5 22v-4h3v4"/>`,
+  ware: `<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12M6 14.5h12M6 11h12"/>`,
+  car: `<path d="M19.5 17h2a.5.5 0 0 0 .5-.5v-3.2c0-.9-.6-1.6-1.5-1.8L16 10.8s-1.2-1.4-2.1-2.3c-.5-.4-1.1-.7-1.8-.7H5.4c-.6 0-1.1.4-1.4.9l-1.5 3A3.8 3.8 0 0 0 2 13.3v3.2c0 .3.2.5.5.5h2"/><circle cx="7" cy="17" r="2.2"/><circle cx="17" cy="17" r="2.2"/><path d="M9.2 17h5.6"/>`,
+  route: `<circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/>`,
+  star: `<path fill="currentColor" stroke="none" d="M12 2.5l2.9 5.9 6.5.95-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.05 1.1-6.5L2.6 9.35l6.5-.95L12 2.5z"/>`,
+  menu: `<path d="M3 6h18M3 12h18M3 18h18"/>`,
+  x: `<path d="M6 6l12 12M18 6 6 18"/>`,
+  globe: `<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.7 2.6 4 5.9 4 9.5s-1.3 6.9-4 9.5c-2.7-2.6-4-5.9-4-9.5s1.3-6.9 4-9.5Z"/>`,
+  user: `<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>`,
+  external: `<path d="M14 4h6v6M20 4 10 14M9 5H5.5A1.5 1.5 0 0 0 4 6.5v12A1.5 1.5 0 0 0 5.5 20h12a1.5 1.5 0 0 0 1.5-1.5V15"/>`,
+  file: `<path d="M14 2.5H6.5a1 1 0 0 0-1 1v17a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V7.5Z"/><path d="M14 2.5v5h4.5M9 13h6M9 17h6"/>`,
+};
+const body = P[name] ?? P.info;
+---
+<svg
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  class={cls || 'icon'}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.9"
+  stroke-linecap="square"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={body}
+/>

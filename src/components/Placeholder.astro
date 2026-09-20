@@ -1,0 +1,13 @@
+---
+/**
+ * Visible "unbaked fact" token — a dashed mono chip per the concept board.
+ * Rendered whenever real business data is still pending, so nothing ships
+ * that could be mistaken for a claim.
+ */
+interface Props {
+  label: string;
+  dark?: boolean;
+}
+const { label, dark = false } = Astro.props;
+---
+<span class={dark ? 'ph ph--ondark' : 'ph'}>[{label}]</span>

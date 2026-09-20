@@ -1,0 +1,60 @@
+---
+import { HOME_SIZE_KEYS, inr } from '@/consts';
+import type { City } from '@/lib/data';
+
+/**
+ * Transparent price table — home size × distance slab.
+ * Highest-intent block on a city page; every figure comes from the content
+ * collection, never hardcoded.
+ */
+interface Props {
+  city: City;
+  heading?: string;
+}
+const { city, heading } = Astro.props;
+const m = city.data.priceMatrix;
+---
+<div class="price-block">
+  <h2>{heading ?? `Packers and movers charges in ${city.data.name}`}</h2>
+  <p class="price-sub">
+    Indicative ranges for standard packing, updated {m.updated}. Your written estimate fixes the exact number after a short survey —
+    and the final bill matches it.
+  </p>
+  <div class="tbl-scroll" role="region" aria-label={`Price bands for moves in ${city.data.name}`} tabindex="0">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th scope="col">Home size</th>
+          <th scope="col">Within {city.data.name} <span class="th-sub">(up to ~30 km)</span></th>
+          <th scope="col">Intercity from {city.data.name} <span class="th-sub">(500–1,500 km)</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          HOME_SIZE_KEYS.map((k) => (
+            <tr>
+              <td><strong>{k}</strong></td>
+              <td class="num">{inr(m.homeLocal[k][0])} – {inr(m.homeLocal[k][1])}</td>
+              <td class="num">{inr(m.homeNational[k][0])} – {inr(m.homeNational[k][1])}</td>
+            </tr>
+          ))
+        }
+        <tr>
+          <td><strong>Car (intercity)</strong></td>
+          <td class="num" colspan="2">{inr(m.vehicle.car[0])} – {inr(m.vehicle.car[1])} on a car carrier</td>
+        </tr>
+        <tr>
+          <td><strong>Bike (intercity)</strong></td>
+          <td class="num" colspan="2">{inr(m.vehicle.bike[0])} – {inr(m.vehicle.bike[1])} crated</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tbl-note">{m.note}</p>
+</div>
+
+<style>
+  .price-block h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); }
+  .price-sub { color: var(--color-slate-500); font-size: 0.92rem; max-width: 68ch; margin: 8px 0 18px; }
+  .th-sub { display: block; font-size: 0.66rem; text-transform: none; letter-spacing: normal; color: var(--color-slate-400); margin-top: 2px; }
+</style>

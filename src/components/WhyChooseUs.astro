@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets';
+import { USP_CARDS } from '@/consts';
+import iconQuote from '@/assets/icons/usp-quote.png';
+import iconCrew from '@/assets/icons/usp-crew.png';
+import iconPacking from '@/assets/icons/usp-packing.png';
+import iconOnTime from '@/assets/icons/usp-ontime.png';
+
+/** "Why choose Shiftify" — claims from consts.ts so they can never drift out of sync with reality. */
+interface Props {
+  heading?: string;
+  intro?: string;
+}
+const { heading = 'Why choose Shiftify', intro } = Astro.props;
+/** USP icon key → PNG brand icon (src/assets/icons) */
+const ICONS = {
+  receipt: { src: iconQuote, alt: 'Itemised written quote — icon' },
+  'shield-check': { src: iconCrew, alt: 'Verified crew shield — icon' },
+  box: { src: iconPacking, alt: 'Packed moving carton — icon' },
+  clock: { src: iconOnTime, alt: 'On-time clock — icon' },
+} as const;
+---
+<div class="usp-head">
+  <h2>{heading}</h2>
+  {intro && <p class="usp-intro">{intro}</p>}
+</div>
+<div class="usp-grid">
+  {
+    USP_CARDS.map((c) => (
+      <div class="card card--pad-s usp-card">
+        <span class="usp-illus" aria-hidden="true">
+          <Image src={ICONS[c.icon as keyof typeof ICONS].src} alt="" width={84} height={84} loading="lazy" decoding="async" />
+        </span>
+        <h3>{c.title}</h3>
+        <p>{c.text}</p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .usp-head h2 { font-size: clamp(1.4rem, 2.6vw, 1.85rem); }
+  .usp-intro { color: var(--color-slate-500); font-size: 0.94rem; max-width: 64ch; margin-top: 8px; }
+  .usp-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 22px;
+  }
+  .usp-card h3 { font-size: 0.98rem; margin-bottom: 4px; }
+  .usp-card p { font-size: 0.84rem; color: var(--color-slate-500); margin-top: 5px; }
+  .usp-ic {
+    width: 44px; height: 44px; border-radius: var(--radius-s); color: #fff; margin-bottom: 10px;
+  }
+  .usp-illus { display: block; width: 84px; height: 84px; margin: -6px 0 10px -6px; }
+  .usp-illus img { display: block; width: 84px; height: 84px; }
+  .usp-card { transition: transform 160ms ease, box-shadow 160ms ease; }
+  .usp-card:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(30, 58, 138, 0.25); }
+  @media (max-width: 960px) { .usp-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 540px) { .usp-grid { grid-template-columns: 1fr; } }
+</style>

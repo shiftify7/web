@@ -1,0 +1,24 @@
+{
+  "bodyWidth": 1707,
+  "bodyHeight": 800,
+  "wheels": [
+    {
+      "name": "front",
+      "R": 93,
+      "x": 322,
+      "y": 678,
+      "dPct": 11.365,
+      "leftPct": 13.181,
+      "topPct": 72.625
+    },
+    {
+      "name": "rear",
+      "R": 99,
+      "x": 1303,
+      "y": 692,
+      "dPct": 12.068,
+      "leftPct": 70.299,
+      "topPct": 73.625
+    }
+  ]
+}

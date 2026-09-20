@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Testimonials from '@/components/Testimonials.astro';
+import CTABand from '@/components/CTABand.astro';
+import { allTestimonials } from '@/lib/data';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const testimonials = await allTestimonials();
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Reviews', path: '/reviews/' }];
+---
+<BaseLayout
+  title="Customer Reviews — Shiftify Packers and Movers"
+  description="Verified reviews from Shiftify moves across Delhi NCR, Mumbai and Bengaluru. No bought ratings — every review traceable to a completed job."
+  canonicalPath="/reviews/"
+  jsonLd={[breadcrumbSchema(crumbs)]}
+  quoteHref="/contact/#quote"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <h1>Reviews, honestly labelled.</h1>
+      <p class="lead">
+        Shiftify is new — and in this industry, a brand-new site with 400 five-star reviews is a red flag, not an achievement.
+        This page will fill with verified customer reviews, each linked to a completed job. Cards marked
+        <strong>"sample"</strong> show the format only and are labelled as placeholders until verification.
+        We do not buy ratings and we do not publish unverifiable praise.
+      </p>
+      <Testimonials testimonials={testimonials} heading="" />
+      <div class="howwe card">
+        <h2>How we collect reviews</h2>
+        <ul>
+          <li>Every customer is asked for a review within 48 hours of delivery — happy or not.</li>
+          <li>Reviews publish with the customer's name (with permission), locality and the service used.</li>
+          <li>Negative reviews stay. Follow-ups on them are documented on this page, not buried.</li>
+          <li>Once 20+ verified reviews exist, ratings become eligible for structured-data display.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <CTABand heading="The only review that really matters is yours." sub="Book a move and grade us yourself — that's the fairest trial in this business." quoteHref="/contact/#quote" />
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -0.03em; margin: 14px 0 12px; }
+  .lead { color: var(--color-slate-500); font-size: 0.95rem; max-width: 74ch; margin-bottom: 8px; }
+  .lead strong { color: var(--color-ink-900); }
+  .howwe { margin-top: 34px; background: var(--color-blue-50); border-color: var(--color-line-blue); }
+  .howwe h2 { font-size: 1rem; margin-bottom: 10px; }
+  .howwe ul { padding-left: 1.3em; list-style: square; color: var(--color-slate-500); font-size: 0.9rem; display: grid; gap: 6px; }
+</style>

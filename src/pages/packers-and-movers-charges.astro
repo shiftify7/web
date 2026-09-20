@@ -1,0 +1,101 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import { allCities, allRoutes, routeSlug, cityMap } from '@/lib/data';
+import { breadcrumbSchema, faqSchema } from '@/lib/schema';
+import { inr, HOME_SIZE_KEYS } from '@/consts';
+
+const [cities, routes] = await Promise.all([allCities(), allRoutes()]);
+const cmap = await cityMap();
+const cname = (slug: string) => cmap.get(slug)?.data.name ?? slug.replace(/-/g, ' ');
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Charges Guide', path: '/packers-and-movers-charges/' }];
+const chargeFaqs = [
+  { q: 'Why do two movers quote wildly different prices for the same move?', a: 'Usually scope, not generosity: packing grade, vehicle size, crew count, insurance and whether society access issues were priced in. The lowest quote that skips these is often the one that grows on moving day. Compare itemised lines, not totals.' },
+  { q: 'What is a fair per-km rate for intercity moving in India?', a: 'There is no honest single per-km number — cost is volume × distance × packing grade. A 2 BHK long-haul move works out roughly ₹18–30 per km all-in on dedicated trucks; shared loads go lower. Treat anyone quoting only per-km for a full home as a red flag.' },
+  { q: 'Do packers and movers charge GST?', a: 'GST-registered movers must charge GST on their services and quote it in the invoice. The rate depends on the service composition (transport vs bundled packing service). A mover who "saves you the GST" is telling you the invoice — and any insurance claim — may not exist either.' },
+  { q: 'Is transit insurance included in the charges?', a: 'It is a real insurance product with a real premium, usually a small percentage of declared value. Some quotes bundle it, many list it separately. What matters is that the cover, insurer and claims process are written down — "free insurance" usually means no insurance.' },
+  { q: 'How can I genuinely reduce my moving cost?', a: 'Declutter before the survey (volume is the biggest lever), pick a mid-month weekday slot, choose shared load for small inventories, and book 2–3 weeks ahead in peak season. Haggling on packing quality is the one saving that backfires.' },
+];
+---
+<BaseLayout
+  title="Packers and Movers Charges in India (2026 Guide) | Shiftify"
+  description="Real price bands for local and intercity moves across Delhi, Gurgaon, Noida, Mumbai and Bengaluru — home size × distance, plus what actually drives moving cost."
+  canonicalPath="/packers-and-movers-charges/"
+  jsonLd={[faqSchema(chargeFaqs), breadcrumbSchema(crumbs)]}
+  quoteHref="/moving-cost-calculator/"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <h1>Packers and movers charges: the honest guide</h1>
+      <p class="lead">
+        Every band below comes from our published city and route price matrices — the data we quote from.
+        Indicative, standard-packing, and updated {cities[0]?.data.priceMatrix.updated}. Your written estimate after survey is the firm price.
+      </p>
+
+      <h2 class="tbl-h">Local move charges by city (within ~30 km)</h2>
+      <div class="tbl-scroll" role="region" aria-label="Local move price bands by city" tabindex="0">
+        <table class="tbl">
+          <thead><tr><th>Home size</th>{cities.map((c) => <th>{c.data.name}</th>)}</tr></thead>
+          <tbody>
+            {HOME_SIZE_KEYS.map((k) => (
+              <tr>
+                <td><strong>{k}</strong></td>
+                {cities.map((c) => <td class="num">{inr(c.data.priceMatrix.homeLocal[k][0])}–{inr(c.data.priceMatrix.homeLocal[k][1])}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="tbl-h">Intercity corridor charges</h2>
+      <div class="tbl-scroll" role="region" aria-label="Intercity route price bands" tabindex="0">
+        <table class="tbl">
+          <thead><tr><th>Route</th><th>Distance</th><th>Transit</th><th>2 BHK band</th><th>Car carrier</th><th></th></tr></thead>
+          <tbody>
+            {await Promise.all(routes.map(async (r) => (
+              <tr>
+                <td><strong style="text-transform:capitalize">{cname(r.data.from)} → {cname(r.data.to)}</strong></td>
+                <td class="num">~{r.data.distanceKm.toLocaleString('en-IN')} km</td>
+                <td class="num">{r.data.transitDays[0]}–{r.data.transitDays[1]} days</td>
+                <td class="num">{inr(r.data.priceMatrix['2BHK'][0])}–{inr(r.data.priceMatrix['2BHK'][1])}</td>
+                <td class="num">{inr(r.data.priceMatrix.car[0])}–{inr(r.data.priceMatrix.car[1])}</td>
+                <td><a class="rowlink" href={`/${await routeSlug(r)}/`}>Route details →</a></td>
+              </tr>
+            )))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="tbl-h">What actually drives your moving cost</h2>
+      <div class="drivers">
+        <div class="card card--pad-s"><h3>Volume, honestly measured</h3><p>The single biggest lever. A surveyed inventory beats a phone description every time — and it is why our firm quotes come after a survey, not before.</p></div>
+        <div class="card card--pad-s"><h3>Access at both ends</h3><p>Floors without lifts, long carries, shuttle stages in narrow lanes and society-permitted hours all change crew time. A quote that never asks about stairs will charge for them later.</p></div>
+        <div class="card card--pad-s"><h3>Packing grade</h3><p>Standard domestic packing vs export-grade protection is a real cost difference — and a real risk difference on long corridors.</p></div>
+        <div class="card card--pad-s"><h3>Calendar</h3><p>Month-ends and the March–July peak book out trucks and society lift slots. Mid-month weekday mornings are the cheapest slots in every city we serve.</p></div>
+      </div>
+
+      <h2 class="tbl-h">Charges FAQ</h2>
+      <div class="faq">
+        {chargeFaqs.map((f) => (
+          <details name="faq">
+            <summary>{f.q}<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" class="icon" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-a">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CTABand heading="Want your number, not a range?" sub="The calculator gives an instant corridor estimate; the written quote follows a short survey." quoteHref="/moving-cost-calculator/" />
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); letter-spacing: -0.03em; margin: 14px 0 12px; }
+  .lead { color: var(--color-slate-500); font-size: 0.94rem; max-width: 74ch; }
+  .tbl-h { font-size: 1.15rem; margin: 34px 0 14px; letter-spacing: -0.02em; }
+  .rowlink { color: var(--color-blue-600); font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
+  .drivers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .drivers h3 { font-size: 0.96rem; margin-bottom: 6px; }
+  .drivers p { font-size: 0.85rem; color: var(--color-slate-500); }
+  @media (max-width: 720px) { .drivers { grid-template-columns: 1fr; } }
+</style>

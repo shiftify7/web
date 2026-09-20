@@ -1,0 +1,45 @@
+{
+  "slug": "bike-transportation",
+  "name": "Bike Transportation",
+  "short": "Crated two-wheeler transport that can ride along with your household consignment.",
+  "icon": "truck",
+  "description": "Bikes and scooters move as crated cargo: drained to safe fuel levels, mirrors and levers padded, bodywork wrapped, and the whole machine secured in a wooden or reinforced crate. On intercity moves the crate can travel with your household consignment — one coordinator, one delivery window, one bill.",
+  "features": [
+    {
+      "title": "Proper crating",
+      "text": "Bodywork wrapped, levers and mirrors padded, and the bike secured in a crate — not lashed loose between furniture."
+    },
+    {
+      "title": "Condition documentation",
+      "text": "Photographed condition report at pickup, matched again at delivery, so any transit marks are objectively attributable."
+    },
+    {
+      "title": "Rides with your household move",
+      "text": "The crate can share the truck with your household goods on intercity corridors, saving a separate shipment."
+    },
+    {
+      "title": "Door-to-door",
+      "text": "Pickup from your address and delivery to the new one, including society gate formalities at both ends."
+    }
+  ],
+  "faqs": [
+    {
+      "q": "How is a bike packed for intercity transport?",
+      "a": "Fuel is brought to a safe level, mirrors/levers are padded, the body is wrapped, and the bike is secured inside a wooden or reinforced crate. The crate rides with the household consignment or as standalone cargo."
+    },
+    {
+      "q": "What does bike transport typically cost?",
+      "a": "It depends on your inventory, floors, lift access, packing level and distance. We run a free survey (video or doorstep) and then confirm an itemised written quote — no advance is needed to book."
+    },
+    {
+      "q": "Do I need to empty the fuel tank?",
+      "a": "Not fully — keep it around a quarter tank or less, which is the safe-transport convention for crated vehicles. We'll confirm at pickup; the condition report notes the fuel level."
+    },
+    {
+      "q": "Which documents are needed for bike transport?",
+      "a": "RC copy and owner ID at pickup; interstate consignment documentation is handled by us. The owner or an authorised person countersigns the condition report at both ends."
+    }
+  ],
+  "metaTitle": "Bike Transport Service — Crated & Insured | Shiftify",
+  "metaDescription": "Two-wheeler transportation with proper crating, condition reports and door-to-door delivery. Ships standalone or with your house move across India."
+}

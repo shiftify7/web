@@ -1,0 +1,21 @@
+{
+  "slug": "house-shifting",
+  "name": "House Shifting",
+  "short": "Complete home relocation — local or intercity — with packed, inventoried, insured transit.",
+  "icon": "home",
+  "description": "Our core service: a trained crew packs your home room by room under a supervisor, loads against a shared inventory list, transports on the right-sized vehicle, and places boxes in the right rooms at the new address. Every move gets a written, itemised quote before you commit — no booking advance, no verbal pricing.",
+  "features": [
+    { "title": "Pre-move survey", "text": "A short video or in-person survey sizes the inventory, floor access and vehicle approach — this is what makes the written quote a promise instead of a guess." },
+    { "title": "Room-wise packing & labelling", "text": "Kitchen, wardrobe, electronics and fragiles each get their own packing spec and labels, so unloading is placement, not a scavenger hunt." },
+    { "title": "Furniture dismantling & reassembly", "text": "Beds, wardrobes and modular units are dismantled, hardware bagged and labelled, and reassembled at the new home as part of the standard scope." },
+    { "title": "Written quote, no advance", "text": "The itemised quote comes first and payment follows its terms. If scope changes on move day, the change is discussed and priced before it happens." }
+  ],
+  "faqs": [
+    { "q": "How far in advance should I book house shifting?", "a": "A week is comfortable in most cities; peak season (March–July) and month-ends need more, mainly because society lift slots and gate passes have their own lead times. Same-week moves are often possible — WhatsApp us your date and we'll say honestly what's feasible." },
+    { "q": "Is dismantling and reassembly of beds and wardrobes included?", "a": "Yes — standard furniture dismantling and reassembly is part of the quoted scope, with hardware bagged and labelled per item. Custom or wall-anchored carpentry is flagged in the survey and quoted separately if needed." },
+    { "q": "How are kitchen and fragile items packed?", "a": "Crockery and glassware move in double-walled cartons with paper/foam separation; appliances are padded and stretch-wrapped. Fragile cartons are marked and loaded top-tier, never under furniture weight." },
+    { "q": "What if something is damaged in the move?", "a": "Report it to your move supervisor or on WhatsApp with photos — the claims process is written and linked from our terms. Transit insurance on declared value is explained in your quote, including what is and isn't covered." }
+  ],
+  "metaTitle": "House Shifting Services in India — Written Quotes | Shiftify",
+  "metaDescription": "House shifting with room-wise packing, dismantling & reassembly, written quotes and insured transit. No booking advance. Servicing NCR, Mumbai, Bengaluru."
+}

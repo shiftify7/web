@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { waLink, waMessageFor, ENV } from '@/consts';
+const wa = waLink(waMessageFor());
+const params = Astro.url.searchParams;
+const city = params.get('city') ?? 'your city';
+const adsLabel = ENV.adsConversionLabel;
+const adsId = ENV.adsId;
+---
+<BaseLayout
+  title="Thank You — Quote Request Received"
+  description="Your quote request has been received. Our team will reach out shortly with your written quote."
+  canonicalPath="/thank-you/"
+  noindex
+  quoteHref="/"
+>
+  <section class="section ty">
+    <div class="wrap">
+      <div class="ty-card card">
+        <span class="ty-check"><Icon name="check" size={26} /></span>
+        <h1>Thanks — we've got your request.</h1>
+        <p class="ty-sub">
+          Your move enquiry{city !== 'your city' ? ` for ${city}` : ''} is with our team. You'll hear from us shortly
+          and after a short survey, your itemised written quote. No advance needed, ever.
+        </p>
+        <p class="ty-tip"><strong>Speed it up:</strong> reply on WhatsApp with photos of key rooms (or a quick video walk-through) and we can often quote within the hour.</p>
+        <div class="ty-actions">
+          {wa && <a class="btn" href={wa} target="_blank" rel="noopener" data-event="whatsapp_click" data-event-position="thank-you"><Icon name="wa" size={18} />Continue on WhatsApp</a>}
+          <a class="btn btn--ghost" href="/">Back to shiftify.in</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {/* Primary conversion: URL-based on /thank-you/ + Ads conversion event.
+      Enhanced conversions pick up hashed user data from sessionStorage where available. */}
+  {adsId && adsLabel && (
+    <script
+      is:inline
+      set:html={`
+(function(){try{
+  if(!window.gtag)return;
+  var attr={};try{attr=JSON.parse(sessionStorage.getItem('sfx_attr')||'{}')}catch(e){}
+  var q=new URLSearchParams(location.search);
+  var lead={};
+  ['phone','email'].forEach(function(k){if(q.get(k))lead[k]=q.get(k)});
+  if(Object.keys(lead).length){gtag('set','user_data',lead)}
+  gtag('event','conversion',{send_to:'${adsId}/${adsLabel}'});
+  gtag('event','lead_thank_you_view',{city:q.get('city')||''});
+}catch(e){}})();`}
+    />
+  )}
+</BaseLayout>
+<style>
+  .ty { display: grid; place-items: center; min-height: 52vh; }
+  .ty-card { max-width: 620px; text-align: center; display: grid; justify-items: center; gap: 14px; padding: clamp(28px, 5vw, 48px); }
+  .ty-check { width: 56px; height: 56px; display: grid; place-items: center; background: var(--color-blue-50); border: 1px solid var(--color-line-blue); color: var(--color-blue-600); border-radius: 8px; }
+  .ty-card h1 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.03em; }
+  .ty-sub { color: var(--color-slate-500); font-size: 0.95rem; }
+  .ty-tip { font-size: 0.86rem; color: var(--color-slate-500); background: var(--color-blue-50); border-radius: 8px; padding: 12px 16px; }
+  .ty-tip strong { color: var(--color-ink-900); }
+  .ty-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+</style>

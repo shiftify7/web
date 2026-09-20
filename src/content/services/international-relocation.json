@@ -1,0 +1,21 @@
+{
+  "slug": "international-relocation",
+  "name": "International Relocation",
+  "short": "Export packing, documentation and shipping coordination for moves abroad — quoted case by case.",
+  "icon": "globe",
+  "description": "Moving countries is a documentation project as much as a packing one. We handle export-grade packing and detailed inventory, coordinate sea or air freight with the destination paperwork your shipment needs, and keep one coordinator across origin, freight and delivery legs. Because routings and rules vary by country, international moves are scoped and quoted case by case — never on a generic price card.",
+  "features": [
+    { "title": "Export-grade packing", "text": "ISPM-15 compliant crating for wood, moisture-barrier wrapping, and carton specs designed for weeks of sea freight — not a domestic move in a container." },
+    { "title": "Documentation support", "text": "Packing lists, passport/visa-linked customs paperwork and destination-specific requirements are coordinated with the freight partner before the shipment moves." },
+    { "title": "Sea and air options", "text": "Full-container, groupage (shared container) and air-freight options explained with honest time/cost trade-offs for your destination." },
+    { "title": "One coordinator end to end", "text": "Origin packing, freight leg and destination delivery agent sit under one point of contact, with milestone updates at each handover." }
+  ],
+  "faqs": [
+    { "q": "How are international moving charges calculated?", "a": "By volume (or weight for air), destination, mode and service level — door-to-door versus door-to-port. Because customs and routing vary by country, we quote case by case after a video survey, with each leg itemised." },
+    { "q": "Sea or air — which should I choose?", "a": "Air for essentials you need in week one; sea for the household. Most families split: suitcases and an air consignment fly with them, furniture and books follow by sea. We map that split with you." },
+    { "q": "What about customs at destination?", "a": "Used household goods rules vary by country and by your visa status — transfer-of-residence concessions exist in many destinations. Documentation is prepared before shipping; destination duties, if any, are flagged in the quote as pass-through costs." },
+    { "q": "Which countries do you serve?", "a": "Through freight partners we coordinate the major corridors — UAE, Singapore, UK, USA, Canada and Australia among them. Tell us the destination on WhatsApp and we'll confirm routings and timelines honestly." }
+  ],
+  "metaTitle": "International Relocation from India — Export Packing | Shiftify",
+  "metaDescription": "International relocation with export packing, customs documentation support and sea/air freight coordination. Case-by-case written quotes from India."
+}

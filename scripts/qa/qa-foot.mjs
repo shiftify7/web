@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+await p.goto('http://localhost:4321/', { waitUntil: 'load' });
+await p.waitForTimeout(3000);
+await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+await p.waitForTimeout(1200);
+await p.screenshot({ path: '/tmp/qa/footer-live.png' });
+const imgs = await p.evaluate(() => Array.from(document.querySelectorAll('.foot-logo-chip img')).map(i => [i.currentSrc, i.complete, i.naturalWidth]));
+console.log(imgs);
+await b.close();

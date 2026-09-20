@@ -1,0 +1,21 @@
+{
+  "slug": "office-relocation",
+  "name": "Office Relocation",
+  "short": "IT-and-files-first office moves planned to land your team working, over a weekend where possible.",
+  "icon": "bldg",
+  "description": "Office moves fail on lost cables and missing files, not on furniture. We plan office relocations backwards from your go-live: IT assets crated and sequenced first, files inventoried cabinet by cabinet, workstations labelled per employee map, and move windows chosen to fit your building's freight-lift and permission rules.",
+  "features": [
+    { "title": "Move plan keyed to go-live", "text": "A documented sequence — IT and server-adjacent assets first, then files, then furniture — so your team resumes work in the shortest practical window." },
+    { "title": "IT & electronics crating", "text": "Monitors, CPUs and network gear move in padded crates with anti-static handling; asset tags are logged against the inventory." },
+    { "title": "Building permission handling", "text": "Freight-lift bookings, loading-bay slots and security gate formalities at both buildings are coordinated in advance — business parks run on these rules." },
+    { "title": "Weekend & overnight moves", "text": "Where building rules allow, moves are scheduled over weekends or overnight to keep downtime close to zero." }
+  ],
+  "faqs": [
+    { "q": "Can you move our office over a weekend?", "a": "Where both buildings permit weekend work and freight-lift slots are available, yes — that is our default plan for small and mid-size offices. We confirm permissions before committing the date." },
+    { "q": "How do you handle computers and servers?", "a": "IT assets are crated with padding and anti-static handling, tagged against an asset inventory, and moved as the first sequence item so your IT team can start setup early. Rack-mounted or sensitive server equipment gets a scoped plan discussed in the survey." },
+    { "q": "Do you provide GST invoices for office relocation?", "a": "Yes — as a GST-registered business we issue proper tax invoices with GSTIN, which most companies need for accounting. Corporate billing terms can be set up in advance." },
+    { "q": "What size of office can you handle?", "a": "Our sweet spot is small and mid-size offices — roughly 5 to 150 workstations — with one or two trucks and a supervisor-led crew. Larger multi-floor projects are scoped individually after a site visit." }
+  ],
+  "metaTitle": "Office Relocation Services — Minimal Downtime | Shiftify",
+  "metaDescription": "Office relocation with IT-first sequencing, asset-tag inventory, weekend moves and GST invoicing. Written plans, transparent pricing. NCR, Mumbai, Bengaluru."
+}

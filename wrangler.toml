@@ -1,0 +1,3 @@
+# Cloudflare Pages — static Astro build + Pages Functions (functions/ dir)
+name = "shiftify"
+pages_build_output_dir = "dist"

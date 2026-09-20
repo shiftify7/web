@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/consts';
+import Placeholder from '@/components/Placeholder.astro';
+---
+<BaseLayout title="Terms of Service" description="Shiftify terms of service — quotes, scope, insurance, claims, cancellations and liability for packing and moving services in India." canonicalPath="/terms/">
+  <section class="section"><div class="wrap prose-sfx">
+    <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-0.03em;margin-bottom:6px">Terms of service</h1>
+    <p style="font-size:0.8rem;color:var(--color-slate-400)">Last updated: September 2026 · {SITE.tradeName} ({SITE.legalEntity || <Placeholder label="LEGAL ENTITY" />})</p>
+
+    <h2>1. Quotes and bookings</h2>
+    <p>A booking is confirmed only against a written, itemised quotation issued after a survey (video or in-person). No booking advance is charged; payment terms are stated in your written quote.</p>
+
+    <h2>2. Scope</h2>
+    <p>The written quote defines the inventory, addresses, packing level and access assumptions. Additions or material changes on move day are re-priced and agreed in writing before the extra work is performed.</p>
+
+    <h2>3. Customer responsibilities</h2>
+    <p>You will arrange society/building permissions (gate pass, lift slots), disclose restricted or hazardous items, keep valuables (cash, jewellery, documents, electronic data) with you, and ensure an authorised adult is present at pickup and delivery.</p>
+
+    <h2>4. Liability and insurance</h2>
+    <p>Standard carrier liability is limited per the written quote's stated terms. Optional transit insurance is underwritten by the insurer named in your policy document — its terms, exclusions and claim process govern any claim. Undeclared high-value items are not covered. Claims must be reported within 72 hours of delivery with photographic evidence.</p>
+
+    <h2>5. Delays and force majeure</h2>
+    <p>We commit to the delivery window in your written quote and to proactive communication if it is at risk. Neither party is liable for delays from events beyond reasonable control (extreme weather, regulatory restrictions such as GRAP vehicle bans, strikes, road closures).</p>
+
+    <h2>6. Cancellations</h2>
+    <p>Governed by our <a href="/refund-policy/">refund &amp; cancellation policy</a>, which forms part of these terms.</p>
+
+    <h2>7. Governing law</h2>
+    <p>These terms are governed by Indian law; courts at {SITE.hqAddress ? 'our registered-office city' : <Placeholder label="JURISDICTION CITY" />} have jurisdiction.</p>
+  </div></section>
+</BaseLayout>

@@ -1,0 +1,873 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import WhyChooseUs from '@/components/WhyChooseUs.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import Testimonials from '@/components/Testimonials.astro';
+import FAQAccordion from '@/components/FAQAccordion.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import HeroQuoteBar from '@/components/islands/HeroQuoteBar';
+import ServicesCarousel from '@/components/islands/ServicesCarousel';
+import Illustration from '@/components/Illustration.astro';
+import movingIndiaWebp from '@/assets/promo/moving-india-535.webp';
+import movingProcessWebp from '@/assets/promo/moving-process-462.webp';
+import type { ImageMetadata } from 'astro';
+import { allCities, allServices, allTestimonials, allRoutes, routeSlug } from '@/lib/data';
+import { movingCompanySchema } from '@/lib/schema';
+import { telHref } from '@/consts';
+import { getCollection } from 'astro:content';
+
+const [cities, services, testimonials, routes, faqs] = await Promise.all([
+  allCities(),
+  allServices(),
+  allTestimonials(),
+  allRoutes(),
+  getCollection('faqs'),
+]);
+
+// ── Services showpiece carousel ──────────────────────────────
+// One service at a time; photography-style branded scenes imported from
+// src/assets/services (converted from the supplied master PNGs).
+const svcAssets = import.meta.glob<{ default: ImageMetadata }>('../assets/services/*.webp', { eager: true });
+const svcImg = (slug: string, w: number) => svcAssets[`../assets/services/${slug}-${w}.webp`].default;
+const SERVICE_LEAD_ORDER = [
+  'house-shifting',
+  'office-relocation',
+  'car-transportation',
+  'bike-transportation',
+  'storage-warehousing',
+  'international-relocation',
+];
+const SERVICE_ALTS: Record<string, string> = {
+  'house-shifting': 'Shiftify crew loading a branded truck outside a family home',
+  'office-relocation': 'Shiftify movers packing desks and equipment in an office',
+  'car-transportation': 'Car boarding a covered Shiftify carrier via loading ramp',
+  'bike-transportation': 'Motorcycle being rolled up a ramp into a Shiftify truck',
+  'storage-warehousing': 'Palletised cartons inside a Shiftify storage warehouse',
+  'international-relocation': 'Shiftify boxes with air and sea freight for an international move',
+};
+const svcSlides = [...services]
+  .sort((a, b) => SERVICE_LEAD_ORDER.indexOf(a.data.slug) - SERVICE_LEAD_ORDER.indexOf(b.data.slug))
+  .map((s) => {
+    const m6 = svcImg(s.data.slug, 600);
+    const m10 = svcImg(s.data.slug, 1024);
+    return {
+      slug: s.data.slug,
+      name: s.data.name,
+      short: s.data.short,
+      features: s.data.features.slice(0, 3).map((f) => f.title),
+      img: {
+        src: m6.src,
+        srcset: `${m6.src} 600w, ${m10.src} 1024w`,
+        width: m6.width,
+        height: m6.height,
+        alt: SERVICE_ALTS[s.data.slug] ?? `${s.data.name} — Shiftify`,
+      },
+    };
+  });
+
+// Truck in the loader + hero: transparent animated WebP whose wheels spin
+// INSIDE the image (baked by scripts/make-truck-anim.py from the split master
+// layers) — no wheel JS at all. Whenever the truck halts (loader's center
+// pause, hero's parked state) we swap to TRUCK_POSTER — the identical static
+// first frame — so the wheels "pause" exactly when the truck does.
+const TRUCK_ANIM = '/shiftify-truck-anim.webp';
+const TRUCK_POSTER = '/shiftify-truck-anim-poster.webp';
+const mc = movingCompanySchema();
+---
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style>
+</noscript>
+<style is:global>
+/* ── services showpiece carousel (auto-advancing, one at a time) ── */
+.svcc-wrap { margin-top: clamp(22px, 3.5vw, 34px); }
+.svcc { padding: 0; overflow: hidden; }
+.svcc-stage { position: relative; transition: height 0.5s cubic-bezier(0.33, 0.66, 0.2, 1); }
+.svcc-slide {
+  position: absolute; inset: 0 0 auto 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  gap: clamp(20px, 3.4vw, 42px); align-items: center;
+  padding: clamp(22px, 3.4vw, 40px);
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s 0.5s;
+}
+.svcc-slide.is-active {
+  position: relative;
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity 0.5s ease 0.06s, transform 0.5s ease 0.06s, visibility 0s 0s;
+}
+.svcc-idx {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.14em; color: var(--color-blue-600);
+}
+.svcc-idx em { font-style: normal; color: var(--color-slate-400); }
+.svcc-name { font-size: clamp(1.45rem, 2.6vw, 2rem); letter-spacing: -0.028em; margin-top: 10px; }
+.svcc-short { color: var(--color-slate-500); font-size: clamp(0.92rem, 1.3vw, 1rem); line-height: 1.62; margin-top: 10px; max-width: 52ch; }
+.svcc-feats { list-style: none; margin-top: 18px; display: grid; gap: 9px; }
+.svcc-feats li { display: flex; gap: 10px; align-items: center; font-size: 0.9rem; font-weight: 600; color: var(--color-navy-800); }
+.svcc-feats svg { color: var(--color-blue-600); flex: none; }
+.svcc-ctas { display: flex; gap: 18px; align-items: center; margin-top: 22px; flex-wrap: wrap; }
+.svcc-link { display: inline-flex; align-items: center; gap: 7px; font-size: 0.9rem; font-weight: 700; color: var(--color-blue-600); }
+.svcc-link svg { transition: transform 160ms ease; }
+.svcc-link:hover svg { transform: translateX(3px); }
+.svcc-link--q {
+  background: var(--color-blue-600); color: #fff; padding: 11px 18px; border-radius: var(--radius-s);
+  transition: background 160ms ease;
+}
+.svcc-link--q:hover { background: var(--color-navy-800); }
+.svcc-fig { margin: 0; border-radius: var(--radius-m); overflow: hidden; }
+.svcc-fig img { display: block; width: 100%; height: auto; }
+.svcc-note { margin-top: 16px; text-align: center; font-size: 0.88rem; color: var(--color-slate-500); }
+.svcc-note a { color: var(--color-blue-600); }
+.svcc-note a strong { font-weight: 700; }
+@media (max-width: 880px) {
+  .svcc-slide { grid-template-columns: 1fr; gap: 22px; }
+  .svcc-fig { order: -1; max-width: 460px; }
+  .svcc-name { margin-top: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svcc-stage { transition: none; }
+  .svcc-slide, .svcc-slide.is-active { transition: none; transform: none; }
+  }
+
+/* ── hero quick-quote bar (horizontal pickup → drop → date → CTA) ── */
+.hero-quote-wrap { margin-top: clamp(18px, 2.6vw, 30px); }
+.hqb {
+  display: grid; grid-template-columns: 1.05fr 1.05fr 0.95fr auto; align-items: stretch;
+  gap: 0; background: #fff; border: 1px solid var(--color-line);
+  border-radius: var(--radius-m); padding: 8px;
+  box-shadow: 0 24px 48px -24px rgba(30, 58, 138, 0.28);
+  position: relative; z-index: 3;
+}
+.hqb-field {
+  display: flex; align-items: center; gap: 10px; padding: 4px 16px;
+  border-right: 1px solid var(--color-line); min-width: 0;
+}
+.hqb-ic { color: var(--color-blue-600); flex: none; }
+.hqb-ic--accent { color: var(--color-orange-500, #f97316); }
+.hqb-field input {
+  border: 0; outline: none; background: transparent; width: 100%; min-width: 0;
+  font: inherit; font-size: 0.95rem; font-weight: 600; color: var(--color-ink-900);
+  padding: 10px 0;
+}
+.hqb-field input::placeholder { color: var(--color-slate-400); font-weight: 500; }
+.hqb-field input[type="date"] { color: var(--color-navy-800); }
+.hqb-field input[type="date"]:invalid { color: var(--color-slate-400); }
+.hqb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  border: 0; border-radius: calc(var(--radius-m) - 5px); cursor: pointer;
+  background: var(--color-blue-600); color: #fff;
+  font: inherit; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em;
+  padding: 0 26px; min-height: 52px; white-space: nowrap;
+  transition: background 160ms ease, transform 160ms ease;
+}
+.hqb-btn:hover { background: var(--color-navy-800); }
+.hqb-btn:active { transform: translateY(1px); }
+.hqb-err {
+  position: absolute; left: 22px; bottom: -24px; margin: 0;
+  font-size: 0.8rem; font-weight: 600; color: #b91c1c;
+}
+@media (max-width: 880px) {
+  .hqb { grid-template-columns: 1fr; gap: 6px; padding: 10px; }
+  .hqb-field { border-right: 0; border-bottom: 1px solid var(--color-line); padding: 2px 10px; }
+  .hqb-btn { min-height: 48px; }
+  .hqb-err { position: static; padding: 4px 10px 2px; }
+}
+</style>
+
+<BaseLayout
+  title="Shiftify Packers and Movers — Moving Made Simple"
+  description="Shiftify Packers and Movers — transparent written quotes, careful packing, insured transit and on-time relocation across India. Get a quote on WhatsApp in minutes."
+  canonicalPath="/"
+  jsonLd={mc ? [mc] : []}
+  quoteHref="#lead-section"
+>
+  <link slot="head" rel="preload" as="image" href={TRUCK_ANIM} type="image/webp" fetchpriority="high" />
+
+  {/* ── Cinematic loader: the truck (wheels spin inside the WebP) crosses the
+      plain white screen — enters from the right, pauses at center (wheels
+      freeze via poster swap), leaves left, overlay fades, homepage reveals.
+      No wheel JS. ── */}
+  <div id="sfx-intro" class="intro play" aria-hidden="true">
+    <div class="intro-rig">
+      <img
+        class="truck-anim truck-anim--moving"
+        src={TRUCK_ANIM}
+        width="1000"
+        height="472"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <img
+        class="truck-anim truck-anim--parked"
+        src={TRUCK_POSTER}
+        width="1000"
+        height="472"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+      />
+      <div class="intro-shadow" aria-hidden="true"></div>
+    </div>
+    <button class="intro-skip" id="intro-skip" type="button">Skip</button>
+    <noscript><style is:inline>#sfx-intro{display:none!important}</style></noscript>
+  </div>
+
+  {/* ── 1 · Hero ─────────────────────────────────────────────── */}
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="kicker h-anim">Packers &amp; Movers · India</span>
+        <h1 class="h-anim">Move Better. <em>Move with Shiftify.</em></h1>
+        <p class="hero-sub h-anim">
+          Professional relocation services across India — careful packing, trained
+          verified crews and insured transit. Because this industry has a trust problem, and we're here to fix it.
+        </p>
+        <div class="hero-cta h-anim">
+          <WhatsAppButton size="lg" label="WhatsApp Us" />
+          <a
+            href={telHref() || '#lead-section'}
+            class="btn btn--ghost btn--lg"
+            data-event="call_click"
+            data-event-position="hero"
+          >
+            <Icon name="phone" size={18} />Call Now
+          </a>
+        </div>
+      </div>
+      {/* Animated truck: one transparent WebP whose wheels spin inside the
+          image itself — the GSAP entrance only translates the rig (drive in
+          from the right and park), then swaps to the static poster so the
+          wheels freeze the moment the truck parks. */}
+      <div class="hero-art">
+        <div class="truck-stage">
+          <div class="truck-rig" id="truck-rig">
+            <img
+              class="truck-anim truck-anim--moving"
+              src={TRUCK_ANIM}
+              width="1000"
+              height="472"
+              alt="Shiftify moving truck"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <img
+              class="truck-anim truck-anim--parked"
+              src={TRUCK_POSTER}
+              width="1000"
+              height="472"
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+            />
+            <div class="truck-streaks" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+          <div class="truck-shadow" id="truck-shadow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+    {/* Horizontal quick-quote bar (Pickup → Drop → Date). Hand-off: it
+        prefills the main lead form below and scrolls the user straight to
+        it — one conversion system, no second endpoint. */}
+    <div class="wrap hero-quote-wrap">
+      <HeroQuoteBar client:load cities={cities.map((c) => ({ name: c.data.name, state: c.data.state }))} />
+    </div>
+  </section>
+
+  {/* ── 2 · Lead form popup (the ONE conversion panel — every quote CTA and
+      the hero quick-quote bar opens this modal; nothing scrolls away) ── */}
+  <div class="lead-modal" id="lead-modal" role="dialog" aria-modal="true" aria-labelledby="lead-modal-title" hidden>
+    <div class="lead-modal-scrim" data-lead-close aria-hidden="true"></div>
+    <div class="lead-modal-card card">
+      <button class="lead-modal-x" id="lead-modal-x" type="button" aria-label="Close quote form">
+        <Icon name="x" size={18} />
+      </button>
+      <div class="lead-modal-head">
+        <span class="kicker kicker--accent">Free · No obligation</span>
+        <h2 id="lead-modal-title">Get your free moving quote</h2>
+        <p>Tell us where you're moving — a Shiftify expert calls you back, plans your move and shares the right quote after a quick survey. No booking advance, ever.</p>
+        <ul class="tick-list lead-modal-ticks">
+          <li><Icon name="check" size={15} />Callback within 30 minutes, working hours</li>
+          <li><Icon name="check" size={15} />Written quote after a free survey</li>
+          <li><Icon name="check" size={15} />We never spam or sell your number</li>
+        </ul>
+      </div>
+      <LeadForm client:load horizontal={true} context={{ source: 'home' }} />
+    </div>
+  </div>
+
+  {/* ── 3 · Services ─────────────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">What we do</span>
+      <div class="sec-head">
+        <h2>Services built around a straightforward promise</h2>
+        <a class="sec-link" href="/services/">All services →</a>
+      </div>
+      <div class="svcc-wrap" data-reveal>
+        <ServicesCarousel items={svcSlides} client:load />
+      </div>
+      <p class="svcc-note">
+        Every service follows the same rule — <a href="/services/"><strong>all six services</strong></a>, one written quote before you pay anything.
+      </p>
+    </div>
+  </section>
+
+  {/* ── 4 · Why choose us ────────────────────────────────────── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">The Shiftify standard</span>
+      <WhyChooseUs intro="This category runs on inflated promises. We run on four commitments we can actually keep — and put them in writing." />
+    </div>
+  </section>
+
+  {/* ── 5 · Cities ───────────────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Where we serve</span>
+      <div class="india-head">
+        <div>
+          <div class="sec-head">
+            <h2>Packers and movers in your city</h2>
+            <a class="sec-link" href="/cities/">All cities →</a>
+          </div>
+          <p class="india-sub">Home-ground crews in five metro regions, and our vetted partner network inland — one written quote, wherever the route takes you.</p>
+        </div>
+        <div class="india-fig float-y" data-reveal aria-hidden="true">
+          <img
+            src={movingIndiaWebp.src}
+            width={movingIndiaWebp.width}
+            height={movingIndiaWebp.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+      <div class="city-grid">
+        {
+          cities.map((c) => (
+            <a class="city-card card card--pad-s" href={`/packers-and-movers-${c.data.slug}/`}>
+              <Icon name="pin" size={20} class="city-pin" />
+              <h3>Packers and Movers in {c.data.name}</h3>
+              <p>{c.data.aliases.length > 0 ? `Also: ${c.data.aliases.join(', ')}` : c.data.state}</p>
+              <span class="city-from">Home, office & vehicle moves →</span>
+            </a>
+          ))
+        }
+        <a class="city-card city-card--more card card--pad-s" href="/cities/">
+          <Icon name="route" size={20} class="city-pin" />
+          <h3>Another city?</h3>
+          <p>Through our vetted partner network we cover most of India.</p>
+          <span class="city-from">Ask about your route →</span>
+        </a>
+      </div>
+
+      <div class="routes-strip">
+        <h3 class="routes-h">Popular intercity routes</h3>
+        <div class="route-list">
+          {
+            routes.slice(0, 6).map(async (r) => (
+              <a class="route-pill" href={`/${await routeSlug(r)}/`}>
+                <span>
+                  {cities.find((c) => c.data.slug === r.data.from)?.data.name ?? r.data.from} →{' '}
+                  {cities.find((c) => c.data.slug === r.data.to)?.data.name ?? r.data.to}
+                  <small>~{r.data.distanceKm.toLocaleString('en-IN')} km · {r.data.transitDays[0]}–{r.data.transitDays[1]} days</small>
+                </span>
+                <Icon name="chev" size={16} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 6 · How it works ─────────────────────────────────────── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">The process</span>
+      <div class="how-wrap">
+        <div class="how-fig" data-reveal aria-hidden="true">
+          <img
+            src={movingProcessWebp.src}
+            width={movingProcessWebp.width}
+            height={movingProcessWebp.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="how-body">
+          <h2 class="how-h">How moving with Shiftify works</h2>
+          <HowItWorks />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 7 · Quote CTA panel ───────────── */}
+  <section class="section">
+    <div class="wrap cta-panel card card--pad-s">
+      <div>
+        <span class="kicker">Talk to a moving expert</span>
+        <h2>Plan your move with a person, not a guess.</h2>
+        <p>Share your route and dates — we run a quick survey, then quote in writing. You pay nothing before your move is confirmed.</p>
+      </div>
+      <a href="#lead-section" class="btn btn--blue btn--lg cta-panel-btn" data-event="quote_cta_click" data-event-position="home-mid">
+        <Icon name="receipt" size={18} />Get a Free Quote
+      </a>
+    </div>
+  </section>
+
+  {/* ── 8 · Reviews ──────────────────────────────────────────── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">Social proof</span>
+      <Testimonials
+        testimonials={testimonials}
+        heading="Reviews from people we've moved"
+        intro="We're a young company earning this one move at a time — review cards marked as samples are placeholders until each customer's quote-free, verified review is published. No bought stars, ever."
+      />
+    </div>
+  </section>
+
+  {/* ── 9 · FAQ ──────────────────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap faq-home">
+      <div class="faq-aside card" data-reveal>
+        <div class="faq-support"><Illustration name="support-24-7" /></div>
+        <h2>Still unsure about something?</h2>
+        <p>WhatsApp us your question — a human replies within minutes during support hours.</p>
+        <WhatsAppButton />
+      </div>
+      <div class="faq-main">
+        <FAQAccordion faqs={faqs.slice(0, 6).map((f) => f.data)} heading="Frequently asked questions" />
+        <a class="sec-link" href="/faq/">Read the full FAQ →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 10 · Final CTA ───────────────────────────────────────── */}
+  <CTABand
+    heading="Ready to move without the moving drama?"
+    sub="Get an itemised written quote, keep your advance in your pocket, and move on the date you actually planned."
+    quoteHref="#lead-section"
+    illustration="new-beginning"
+  />
+</BaseLayout>
+
+<script is:inline>
+/* Intro overlay early-out: reduced-motion and ?intro=0 skip instantly;
+   no-JS covered by the noscript tag. Everything else is GSAP below. */
+(function () {
+  var el = document.getElementById('sfx-intro');
+  if (!el) return;
+  var early = matchMedia('(prefers-reduced-motion: reduce)').matches || /intro=0/.test(location.search);
+  if (early) { el.remove(); document.dispatchEvent(new CustomEvent('sfx:intro-done')); }
+})();
+</script>
+
+{/* ── Cinematic loader: ARRIVE → PAUSE → MOVE → REVEAL.
+    Animated truck (wheels spin inside the WebP) crosses a plain white
+    viewport: enters from the right with power3.out, stops briefly at center
+    — the poster swap freezes the wheel spin while halted — then leaves to
+    the left with power2.in, overlay fades, homepage reveals. ── */}
+<script>
+  import { gsap } from 'gsap';
+
+  const overlay = document.getElementById('sfx-intro');
+  if (overlay) {
+    const rig = overlay.querySelector<HTMLElement>('.intro-rig')!;
+    const skipBtn = document.getElementById('intro-skip');
+    const travel = Math.max(window.innerWidth * 1.2, rig.offsetWidth * 1.3);
+
+    gsap.set(rig, { willChange: 'transform' });
+
+    const release = () => document.dispatchEvent(new CustomEvent('sfx:intro-done'));
+
+    const tl = gsap.timeline({ paused: true });
+
+    // phase 2 · truck enters from the RIGHT → centered (subtle accel/decel)
+    tl.fromTo(rig, { x: () => travel }, { x: 0, duration: 1.3, ease: 'power3.out' }, 0.15);
+    // phase 3 · calm center pause (~0.5s): wheels freeze (animated → poster)
+    tl.call(() => rig.classList.add('is-parked'), [], 1.45);
+    tl.to(rig, { y: -2, duration: 0.15, ease: 'power2.out' }, 1.45);
+    tl.to(rig, { y: 0, duration: 0.22, ease: 'power2.inOut' }, 1.6);
+    // phase 4 · truck resumes its journey to the LEFT (~1.1s, accelerates)
+    tl.call(() => rig.classList.remove('is-parked'), [], 1.95);
+    tl.to(rig, { x: () => -travel, duration: 1.1, ease: 'power2.in' }, 1.95);
+    // phase 5 · homepage reveals — no hard flash; hero entrance takes the hand-off
+    tl.call(release, [], 3.0);
+    tl.to(overlay, { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, 3.05);
+    tl.eventCallback('onComplete', () => {
+      tl.kill();
+      overlay.remove();
+    });
+
+    skipBtn?.addEventListener('click', () => {
+      tl.kill();
+      gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.2,
+        onComplete: () => overlay.remove(),
+      });
+      release();
+    });
+
+    // one frame so offsetWidth measurements are stable, then play
+    requestAnimationFrame(() => tl.play());
+  }
+</script>
+
+{/* ── Hero entrance: text rises in a stagger, branded truck drives in from the
+    right (wheels spin inside the animated WebP itself — no wheel JS), parks,
+    then swaps to the static poster so the wheels freeze while parked.
+    Gated on the intro loader finishing. Reduced-motion users: nothing runs;
+    the parked poster state is applied directly. ── */}
+<script>
+  import { gsap } from 'gsap';
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rig = document.getElementById('truck-rig');
+
+  function runHeroIntro() {
+    if (!rig) return;
+    if (reduced) { rig.classList.add('is-parked'); return; }
+    const shadow = document.getElementById('truck-shadow');
+    const streaks = rig.querySelector('.truck-streaks');
+    const isMobile = window.innerWidth < 768;
+    // 110% of its own width — fully beyond the right edge; it drives
+    // right → left into its parked spot on the hero's right side
+    const startX = rig.offsetWidth * 1.1;
+    const enterDur = isMobile ? 1.1 : 1.35;
+    gsap.set(rig, { willChange: 'transform' });
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // 1 · text rises: eyebrow → heading → paragraph → CTAs → chips
+    tl.fromTo(
+      '.hero-copy .h-anim',
+      { opacity: 0, y: 60 },
+      { opacity: 1, y: 0, duration: 0.85, stagger: 0.12 },
+      0.05,
+    );
+
+    // 2 · truck drives from the right edge into its spot — full opacity and
+    // scale from the first pixel: it visibly travels, doesn't fade or grow
+    tl.fromTo(rig, { x: startX }, { x: 0, duration: enterDur, ease: 'power3.out' }, 0.55);
+
+    // 3 · supporting details track the entrance
+    if (shadow) {
+      tl.fromTo(shadow, { opacity: 0.15, scaleX: 0.8 }, { opacity: 1, scaleX: 1, duration: enterDur, ease: 'power3.out' }, 0.55);
+    }
+    if (streaks) {
+      tl.fromTo(streaks, { opacity: 0 }, { opacity: 0.7, duration: 0.4, ease: 'power2.out' }, 0.55 + enterDur * 0.2);
+      tl.to(streaks, { opacity: 0, duration: 0.45, ease: 'power2.in' }, 0.55 + enterDur * 0.75);
+    }
+
+    // 4 · suspension settle
+    tl.to(rig, { y: -3, duration: 0.18, ease: 'power2.out' }, 0.55 + enterDur);
+    tl.to(rig, { y: 0, duration: 0.3, ease: 'power2.inOut' }, 0.55 + enterDur + 0.18);
+
+    // park: drop will-change, freeze the wheel spin (animated → poster)
+    tl.eventCallback('onComplete', () => {
+      gsap.set(rig, { clearProps: 'willChange' });
+      rig.classList.add('is-parked');
+    });
+  }
+
+  // Never run while the intro overlay is visible.
+  if (document.getElementById('sfx-intro')) {
+    document.addEventListener('sfx:intro-done', runHeroIntro, { once: true });
+  } else {
+    runHeroIntro();
+  }
+</script>
+
+<style>
+  /* ── cinematic loader: plain white, truck only, no decorations ── */
+  .intro { display: none; }
+  .intro.play {
+    display: grid; place-items: center; position: fixed; inset: 0; z-index: 90;
+    background: #ffffff; overflow: hidden;
+  }
+  .intro-rig { position: relative; width: min(680px, 45vw); aspect-ratio: 1000 / 472; }
+  .intro-rig .truck-anim { width: 100%; height: auto; display: block; }
+  .intro-shadow {
+    position: absolute; left: 4%; right: 2%; bottom: -4%; height: 7%;
+    background: radial-gradient(56% 100% at 50% 50%, rgba(21, 30, 96, 0.26), transparent 68%);
+  }
+  .intro-skip {
+    position: fixed; right: 18px; bottom: 18px; font-size: 0.72rem; color: #9aa3c0;
+    border: 0; padding: 8px 10px; background: transparent; cursor: pointer;
+  }
+  .intro-skip:hover { color: #151e60; }
+  @media (max-width: 1100px) { .intro-rig { width: min(640px, 60vw); } }
+  @media (max-width: 640px) { .intro-rig { width: 80vw; } }
+  @media (prefers-reduced-motion: reduce) { .intro.play { display: none; } }
+
+  /* parked/pause swap: teams img.truck-anim--moving (animated WebP) with
+     img.truck-anim--parked (identical static poster); .is-parked on the rig
+     flips them, so the baked wheel spin stops exactly when the truck stops
+     (loader center pause + hero parked). Specificity beats the rig's
+     .truck-anim display rule in both rigs (loader + hero). */
+  .intro-rig img.truck-anim--parked, .truck-rig img.truck-anim--parked {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: none;
+  }
+  .intro-rig.is-parked img.truck-anim--moving,
+  .truck-rig.is-parked img.truck-anim--moving { display: none; }
+  .intro-rig.is-parked img.truck-anim--parked,
+  .truck-rig.is-parked img.truck-anim--parked { display: block; }
+
+  /* ── hero ── */
+  .hero { padding-top: clamp(36px, 5vw, 64px); overflow: clip; }
+  .hero-grid { position: relative; padding-bottom: clamp(56px, 7vw, 84px); }
+  .hero-copy { position: relative; z-index: 2; max-width: 580px; }
+  .hero h1 { font-size: clamp(2.4rem, 5.2vw, 3.9rem); font-weight: 800; letter-spacing: -0.032em; margin: 14px 0 16px; }
+  .hero h1 em { font-style: normal; color: var(--color-blue-600); }
+  .hero-sub { color: var(--color-slate-500); font-size: clamp(0.95rem, 1.6vw, 1.06rem); max-width: 46ch; }
+  .hero-cta { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+
+  /* animated truck rig — one self-contained WebP (wheels spin inside it) */
+  .truck-stage { position: relative; width: 100%; }
+  .truck-rig { position: relative; aspect-ratio: 1000 / 472; }
+  .truck-anim { width: 100%; height: auto; display: block; }
+  .truck-shadow {
+    position: absolute; left: 4%; right: 2%; bottom: -3%; height: 6.5%;
+    background: radial-gradient(56% 100% at 50% 50%, rgba(21, 30, 96, 0.3), transparent 68%);
+  }
+  .truck-streaks { position: absolute; right: -8%; top: 26%; width: 17%; height: 46%; }
+  .truck-streaks i { position: absolute; right: 0; display: block; height: 6px; border-radius: 3px; background: linear-gradient(90deg, rgba(59, 123, 240, 0), rgba(59, 123, 240, 0.55)); }
+  .truck-streaks i:nth-child(1) { top: 0; width: 100%; }
+  .truck-streaks i:nth-child(2) { top: 46%; width: 72%; }
+  .truck-streaks i:nth-child(3) { top: 90%; width: 88%; }
+
+  /* desktop ≥1024: huge truck dominating the right half, kissing the right edge */
+  @media (min-width: 1024px) {
+    .hero-art {
+      position: absolute; z-index: 1;
+      bottom: clamp(12px, 6%, 40px);
+      right: clamp(-110px, -4vw, -16px);
+      width: clamp(600px, 52vw, 860px);
+    }
+    /* your 10rem fix — applied to the WHOLE rig (body + wheels + shadow), so
+       the parked position shifts right as one unit and the entrance stops
+       exactly there; wheels stay registered with the body */
+    .hero-art .truck-stage { margin-left: 10rem; }
+  }
+  /* tablet 768–1023: truck still on the right, reduced */
+  @media (min-width: 768px) and (max-width: 1023.5px) {
+    .hero-art {
+      position: absolute; z-index: 1;
+      bottom: clamp(10px, 5%, 32px);
+      right: clamp(-90px, -4vw, -20px);
+      width: clamp(430px, 60vw, 640px);
+    }
+  }
+  /* mobile <768: stacked under the content, fully visible with breathing room */
+  @media (max-width: 767.5px) {
+    .hero-art { width: min(84vw, 380px); margin: 12px auto 0; }
+  }
+
+  /* ── quote popup: the lead form opens over the page, not as a section ── */
+  .lead-modal { position: fixed; inset: 0; z-index: 80; display: none; }
+  .lead-modal.open { display: grid; place-items: center; padding: clamp(10px, 3vw, 26px); }
+  .lead-modal-scrim { position: absolute; inset: 0; background: rgba(7, 13, 31, 0.58); backdrop-filter: blur(3px); }
+  .lead-modal-card {
+    position: relative; z-index: 1; width: min(760px, 100%);
+    max-height: min(92vh, 940px); overflow-y: auto; overscroll-behavior: contain;
+    padding: clamp(20px, 3.4vw, 34px);
+    animation: lead-pop 0.28s cubic-bezier(0.22, 0.9, 0.32, 1.1);
+  }
+  @keyframes lead-pop { from { opacity: 0; transform: translateY(26px) scale(0.985); } to { opacity: 1; transform: none; } }
+  .lead-modal-x {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    display: grid; place-items: center; width: 38px; height: 38px;
+    border: 1px solid var(--color-line); border-radius: 50%; cursor: pointer;
+    background: #fff; color: var(--color-ink-900); padding: 0;
+  }
+  .lead-modal-x:hover { background: var(--color-blue-50); color: var(--color-blue-600); }
+  .lead-modal-head h2 { font-size: clamp(1.45rem, 2.8vw, 1.85rem); letter-spacing: -0.028em; margin: 10px 0 8px; }
+  .lead-modal-head p { color: var(--color-slate-500); font-size: 0.92rem; max-width: 60ch; }
+  .lead-modal-ticks { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 12px 0 14px; }
+  @media (prefers-reduced-motion: reduce) { .lead-modal-card { animation: none; } }
+
+  /* ── quote ── */
+  .quote-wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+  .quote-side h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; margin: 12px 0 12px; }
+  .quote-side p { color: var(--color-slate-500); font-size: 0.94rem; }
+  .tick-list { list-style: none; margin-top: 18px; display: grid; gap: 10px; font-size: 0.9rem; font-weight: 600; color: var(--color-navy-800); }
+  .tick-list li { display: flex; gap: 10px; align-items: center; }
+  .tick-list svg { color: var(--color-blue-600); flex: none; }
+  @media (max-width: 900px) { .quote-wrap { grid-template-columns: 1fr; } }
+
+  /* ── services ── */
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .sec-head h2, .how-h { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; }
+  .sec-link { color: var(--color-blue-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+
+
+  /* ── cities ── */
+  .city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .city-card { position: relative; transition: border-color 180ms, box-shadow 180ms; }
+  .city-card:hover { border-color: var(--color-line-blue); box-shadow: 0 18px 36px -22px rgba(30, 58, 138, 0.28); }
+  .city-pin { color: var(--color-blue-600); margin-bottom: 12px; }
+  .city-card h3 { font-size: 0.98rem; }
+  .city-card p { font-size: 0.82rem; color: var(--color-slate-500); margin-top: 4px; }
+  .city-from { display: block; margin-top: 12px; font-size: 0.8rem; font-weight: 700; color: var(--color-navy-800); }
+  .city-card--more { background: var(--color-blue-50); border-color: var(--color-line-blue); }
+  .routes-strip { margin-top: 40px; }
+  .routes-h { font-size: 1.05rem; }
+  .route-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .route-pill {
+    display: flex; justify-content: space-between; gap: 12px; align-items: center;
+    border: 1px solid var(--color-line); border-radius: var(--radius-s);
+    padding: 15px 17px; background: #fff; font-size: 0.88rem; font-weight: 600;
+    transition: border-color 180ms;
+  }
+  .route-pill:hover { border-color: var(--color-blue-600); }
+  .route-pill small { display: block; font-weight: 500; font-size: 0.72rem; color: var(--color-slate-500); margin-top: 2px; }
+  .route-pill svg { color: var(--color-slate-400); flex: none; }
+  @media (max-width: 900px) { .city-grid, .route-list { grid-template-columns: 1fr; } }
+
+  /* ── calculator ── */
+  /* ── quote CTA panel ── */
+  .cta-panel { display: flex; align-items: center; justify-content: space-between; gap: clamp(20px, 4vw, 48px); padding: clamp(24px, 4vw, 36px); }
+  .cta-panel h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; margin: 12px 0 12px; }
+  .cta-panel p { color: var(--color-slate-500); font-size: 0.94rem; }
+  .cta-panel-more a { color: var(--color-blue-600); font-weight: 600; }
+  .cta-panel-btn { flex: none; }
+  @media (max-width: 900px) { .cta-panel { flex-direction: column; align-items: flex-start; } .cta-panel-btn { width: 100%; justify-content: center; } }
+  /* quote card sizing — 500–650px-ish on desktop, full width on mobile */
+  .qe-card { padding: clamp(18px, 3vw, 28px); max-width: 640px; width: 100%; justify-self: end; }
+  @media (max-width: 900px) { .qe-card { justify-self: stretch; max-width: 100%; } }
+
+  /* ── spot illustrations (src/assets/illustrations — inline SVG, no JS) ── */
+  .india-head { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.9fr); gap: clamp(18px, 4vw, 44px); align-items: center; }
+  .india-sub { color: var(--color-slate-500); font-size: 0.92rem; max-width: 58ch; margin-top: 2px; }
+  .india-fig { border-radius: var(--radius-m); }
+  .india-fig img { width: 100%; height: auto; display: block; border-radius: var(--radius-m); }
+  .how-wrap { display: grid; grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.5fr); gap: clamp(22px, 4vw, 48px); align-items: center; }
+  .how-fig img {
+    width: min(400px, 88vw); height: auto; display: block; margin-inline: auto;
+    border-radius: var(--radius-m); border: 1px solid var(--color-line-blue);
+    background: #fff; padding: 10px;
+    box-shadow: 0 24px 48px -30px rgba(30, 58, 138, 0.28);
+  }
+  .how-body { min-width: 0; }
+  .faq-support { width: 104px; margin-bottom: 12px; }
+  .faq-support svg { width: 100%; height: auto; display: block; }
+  @media (max-width: 900px) {
+    .india-head { grid-template-columns: 1fr; }
+    .india-fig { max-width: 420px; margin-inline: auto; }
+    .how-wrap { grid-template-columns: 1fr; }
+    .how-fig { max-width: 340px; margin-inline: auto; order: 2; }
+  }
+  
+
+  /* subtle motion: scroll reveal + gentle float (reduced-motion = static) */
+  [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  [data-reveal].rv-in { opacity: 1; transform: none; }
+  .float-y { animation: floaty 7s ease-in-out infinite alternate; }
+  @keyframes floaty { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+  .anim-spin { transform-origin: 52px 48px; animation: wheelturn 18s linear infinite; }
+  @keyframes wheelturn { to { transform: rotate(1turn); } }
+  .route-dash { stroke-dashoffset: 0; animation: dashflow 3.2s linear infinite; }
+  @keyframes dashflow { to { stroke-dashoffset: -64; } }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .float-y, .anim-spin, .route-dash { animation: none !important; }
+  }
+
+  /* ── home faq ── */
+  .faq-home { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 24px; align-items: start; }
+  .faq-aside { position: sticky; top: 88px; display: grid; gap: 10px; justify-items: start; }
+  .faq-aside svg { color: var(--color-blue-600); }
+  .faq-aside h2 { font-size: 1.15rem; }
+  .faq-aside p { font-size: 0.86rem; color: var(--color-slate-500); }
+  .faq-main .sec-link { display: inline-block; margin-top: 16px; }
+  @media (max-width: 900px) { .faq-home { grid-template-columns: 1fr; } .faq-aside { position: static; } }
+</style>
+
+<script is:inline>
+/* Quote popup controller: every quote CTA on this page (`#lead-section` or
+   `/#lead-section` links — hero bar, services slides, mid-page panel, final
+   CTA band, sticky mobile bar, fallbacks) opens the modal instead of
+   scrolling; the hero quick-quote bar fires `sfx:quote-open` directly.
+   Esc / scrim / × closes; focus is restored to the trigger. */
+(function () {
+  var modal = document.getElementById('lead-modal');
+  if (!modal) return;
+  var lastFocus = null;
+  function open() {
+    if (!modal.classList.contains('open')) lastFocus = document.activeElement;
+    modal.classList.add('open');
+    modal.removeAttribute('hidden');
+    document.documentElement.style.overflow = 'hidden';
+    var x = document.getElementById('lead-modal-x');
+    if (x) x.focus();
+  }
+  function close() {
+    modal.classList.remove('open');
+    document.documentElement.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var a = t && t.closest ? t.closest('a[href="#lead-section"], a[href="/#lead-section"]') : null;
+    if (a) {
+      e.preventDefault();
+      open();
+      window.setTimeout(function () {
+        var name = document.getElementById('lf-name');
+        if (name) name.focus({ preventScroll: true });
+      }, 300);
+    }
+  });
+  modal.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t.closest && (t.closest('[data-lead-close]') || t.closest('#lead-modal-x'))) close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+  window.addEventListener('sfx:quote-open', open);
+  if (location.hash === '#lead-section') open();
+})();
+</script>
+
+<script is:inline>
+/* Scroll-reveal for the spot illustrations: vanilla IntersectionObserver,
+     adds .rv-in once, unobserves immediately. Reduced-motion users get
+     instant-on via the CSS guard (no JS effect either way). ~0.4 KB inline. */
+  (function () {
+    try {
+      const targets = document.querySelectorAll('[data-reveal]');
+      if (!targets.length) return;
+      if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        targets.forEach((el) => el.classList.add('rv-in'));
+        return;
+      }
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('rv-in');
+            io.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.16, rootMargin: '0px 0px -6% 0px' },
+      );
+      targets.forEach((el) => io.observe(el));
+    } catch (e) { /* illustrations stay visible via CSS fallback styles below */ }
+  })();
+</script>

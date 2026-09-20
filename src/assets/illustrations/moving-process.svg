@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" role="img" aria-label="Simple four-step booking process">
+  <ellipse cx="104" cy="470" rx="120" ry="16" fill="#dce7fb"/>
+  <rect x="60" y="24" width="200" height="416" rx="24" fill="#0f172a"/>
+  <rect x="70" y="34" width="180" height="396" rx="17" fill="#fff"/>
+  <rect x="70" y="34" width="180" height="86" rx="17" fill="#2563eb"/>
+  <text x="96" y="78" font-family="Sora,Arial,sans-serif" font-size="19" font-weight="800" font-style="italic" letter-spacing="0" fill="#fff">shiftify</text>
+  <circle cx="86" cy="70" r="9" fill="#3b7bf0"/>
+  <text x="96" y="97" font-family="Sora,Arial,sans-serif" font-size="9" letter-spacing=".3em" fill="#dce7fb">PACKERS &amp; MOVERS</text>
+  <rect x="140" y="40" width="40" height="7" rx="3.5" fill="#3b7bf0"/>
+  <g>
+    <circle cx="100" cy="156" r="15" fill="#2563eb"/>
+    <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="m94 156 4.2 4.2 7.4-8"/>
+    <rect x="128" y="148" width="100" height="7" rx="3.5" fill="#0f172a"/>
+    <rect x="128" y="161" width="70" height="6" rx="3" fill="#c6d0de"/>
+  </g>
+  <g>
+    <circle cx="100" cy="212" r="15" fill="#2563eb"/>
+    <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="m94 212 4.2 4.2 7.4-8"/>
+    <rect x="128" y="204" width="100" height="7" rx="3.5" fill="#0f172a"/>
+    <rect x="128" y="217" width="78" height="6" rx="3" fill="#c6d0de"/>
+  </g>
+  <g>
+    <circle cx="100" cy="268" r="15" fill="#2563eb"/>
+    <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="m94 268 4.2 4.2 7.4-8"/>
+    <rect x="128" y="260" width="100" height="7" rx="3.5" fill="#0f172a"/>
+    <rect x="128" y="273" width="60" height="6" rx="3" fill="#c6d0de"/>
+  </g>
+  <g>
+    <circle cx="100" cy="324" r="15" fill="#2563eb"/>
+    <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="m94 324 4.2 4.2 7.4-8"/>
+    <rect x="128" y="316" width="100" height="7" rx="3.5" fill="#0f172a"/>
+    <rect x="128" y="329" width="72" height="6" rx="3" fill="#c6d0de"/>
+  </g>
+  <path fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round" d="M330 340q46.5 30 34.5 80"/>
+  <path fill="#2563eb" d="m355 435-7.2-27.5 22 18.5Z"/>
+  <circle cx="384" cy="310" r="5" fill="#3b7bf0" opacity=".8"/>
+  <circle cx="36" cy="120" r="5" fill="#3b7bf0" opacity=".5"/>
+</svg>

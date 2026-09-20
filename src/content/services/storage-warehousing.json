@@ -1,0 +1,21 @@
+{
+  "slug": "storage-warehousing",
+  "name": "Storage & Warehousing",
+  "short": "Short- and long-term household storage in sealed, inventoried units — between leases, renovations or postings.",
+  "icon": "ware",
+  "description": "When dates don't line up — a lease gap, a renovation, a posting abroad — your home can wait safely. Goods are packed to move standard, inventoried box by box, sealed and stored, then re-delivered when you're ready. Storage charges are stated per month per volume before anything enters the unit.",
+  "features": [
+    { "title": "Packed to move standard, then sealed", "text": "Storage goods get the same packing discipline as a move — so re-delivery is a simple, safe operation months later." },
+    { "title": "Box-level inventory", "text": "Every carton and item is listed before storage; partial retrievals are possible against the inventory list." },
+    { "title": "Flexible durations", "text": "From a couple of weeks between leases to year-long postings, billed per month on measured volume — in writing, in advance." },
+    { "title": "Optional insurance during storage", "text": "Storage-period cover is available and explained separately from transit cover — different risk, different policy, both documented." }
+  ],
+  "faqs": [
+    { "q": "How does household storage actually work?", "a": "We pack and collect like a normal move, inventory every box, seal and store your goods, then re-deliver when you call. You can retrieve specific boxes mid-term against the inventory list." },
+    { "q": "What can't be stored?", "a": "Perishables, liquids that can leak, flammables, documents of title, cash/jewellery and anything illegal. Clothes, books, furniture, appliances and kitchenware are the standard profile — we'll flag edge cases at survey." },
+    { "q": "How are storage charges calculated?", "a": "By measured volume per month, stated in writing before pickup. There are no hidden 'handling' discoveries later — in/out handling and monthly storage are separate, named lines you approve first." },
+    { "q": "Is my stuff insured while in storage?", "a": "Storage cover is distinct from transit insurance and is offered as an option with written terms — scope, exclusions and claims process documented before you sign." }
+  ],
+  "metaTitle": "Household Storage & Warehousing — Sealed Units | Shiftify",
+  "metaDescription": "Short- and long-term household storage with box-level inventory, sealed units and written monthly pricing. Ideal between leases, renovations or postings."
+}

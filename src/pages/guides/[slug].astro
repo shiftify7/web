@@ -1,0 +1,58 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import { breadcrumbSchema } from '@/lib/schema';
+import { SITE } from '@/consts';
+
+export const getStaticPaths = (async () => {
+  const guides = await getCollection('guides');
+  return guides
+    .filter((g) => !g.data.draft)
+    .map((g) => ({ params: { slug: g.id.replace(/\.mdx?$/, '') }, props: { guide: g } }));
+}) satisfies GetStaticPaths;
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+const slug = guide.id.replace(/\.mdx?$/, '');
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Guides', path: '/guides/' },
+  { name: guide.data.title, path: `/guides/${slug}/` },
+];
+const article = {
+  '@type': 'Article',
+  headline: guide.data.title,
+  description: guide.data.description,
+  datePublished: guide.data.pubDate,
+  dateModified: guide.data.updatedDate ?? guide.data.pubDate,
+  author: { '@id': `${SITE.domain}/#organization` },
+  publisher: { '@id': `${SITE.domain}/#organization` },
+  mainEntityOfPage: `${SITE.domain}/guides/${slug}/`,
+};
+---
+<BaseLayout
+  title={`${guide.data.title} | Shiftify Guides`}
+  description={guide.data.description}
+  canonicalPath={`/guides/${slug}/`}
+  jsonLd={[article, breadcrumbSchema(crumbs)]}
+  ogType="article"
+  quoteHref="/contact/#quote"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <article class="prose-sfx" style="margin-top:22px">
+        <h1 style="font-size:clamp(1.6rem,3.2vw,2.3rem);letter-spacing:-0.03em;margin:0 0 8px">{guide.data.title}</h1>
+        <p style="font-size:0.8rem;color:var(--color-slate-400)">
+          Published {new Date(guide.data.pubDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+          {guide.data.updatedDate && ` · updated ${new Date(guide.data.updatedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`}
+        </p>
+        <Content />
+      </article>
+    </div>
+  </section>
+  <CTABand heading="Checklist done — quote next?" sub="Get the itemised written quote the guide keeps talking about." quoteHref="/#lead-section" />
+</BaseLayout>

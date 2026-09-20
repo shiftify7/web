@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+
+/** Visual breadcrumbs — pair with breadcrumbSchema() in the page's JSON-LD. */
+interface Props {
+  items: readonly { name: string; path: string }[];
+  class?: string;
+}
+const { items, class: cls = '' } = Astro.props;
+---
+<nav class={`crumbs ${cls}`} aria-label="Breadcrumb">
+  {
+    items.map((it, i) => (
+      <>
+        {i > 0 && <Icon name="chev" size={12} />}
+        {i < items.length - 1 ? (
+          <a href={it.path}>{it.name}</a>
+        ) : (
+          <span aria-current="page">{it.name}</span>
+        )}
+      </>
+    ))
+  }
+</nav>

@@ -1,0 +1,127 @@
+---
+import type { Testimonial } from '@/lib/data';
+import Icon from './Icon.astro';
+
+/**
+ * Reviews block — self-running carousel (no arrows, no dots).
+ * Unverifiable/sample entries render with a visible dashed placeholder
+ * state — never dressed up as real social proof. Only verified reviews
+ * are eligible for AggregateRating elsewhere.
+ */
+interface Props {
+  testimonials: Testimonial[];
+  heading?: string;
+  intro?: string;
+}
+const { testimonials, heading = 'What customers say', intro } = Astro.props;
+// cards cloned onto the tail so the last real slide hands off seamlessly
+// to a visual copy of the first, then we snap back (3 = max visible per view)
+const clones = testimonials.slice(0, 3);
+---
+
+<div class="reviews-head">
+  <h2>{heading}</h2>
+  {intro && <p class="reviews-intro">{intro}</p>}
+</div>
+
+<div class="reviews-viewport" data-reviews data-count={testimonials.length}>
+  <div class="reviews-track" data-reviews-track>
+    {
+      testimonials.map((t) => (
+        <figure class:list={['review card card--pad-s', t.data.placeholder && 'review--ph']}>
+          <div class="review-top">
+            <span class="review-stars" aria-label={t.data.placeholder ? 'Sample rating' : `Rated ${t.data.rating} out of 5`}>
+              {Array.from({ length: 5 }, (_, i) => (
+                <Icon name="star" size={14} class={i < t.data.rating ? 'star-on' : 'star-off'} />
+              ))}
+            </span>
+            {t.data.placeholder && <span class="ph">SAMPLE REVIEW — pending verification</span>}
+          </div>
+          <blockquote>{t.data.text}</blockquote>
+          <figcaption>
+            <strong>{t.data.name}</strong>
+            <span class="review-meta">{t.data.locality} · {t.data.service.replace(/-/g, ' ')}</span>
+          </figcaption>
+        </figure>
+      ))
+    }
+    {
+      clones.map((t) => (
+        <figure class:list={['review card card--pad-s', t.data.placeholder && 'review--ph']} aria-hidden="true">
+          <div class="review-top">
+            <span class="review-stars" aria-hidden="true">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Icon name="star" size={14} class={i < t.data.rating ? 'star-on' : 'star-off'} />
+              ))}
+            </span>
+            {t.data.placeholder && <span class="ph">SAMPLE REVIEW — pending verification</span>}
+          </div>
+          <blockquote>{t.data.text}</blockquote>
+          <figcaption>
+            <strong>{t.data.name}</strong>
+            <span class="review-meta">{t.data.locality} · {t.data.service.replace(/-/g, ' ')}</span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('[data-reviews]').forEach((root) => {
+      const track = root.querySelector('[data-reviews-track]');
+      const total = Number(root.getAttribute('data-count')) || 0;
+      if (!track || total < 2) return;
+      let i = 0;
+      let timer = null;
+      const slide = () => {
+        i += 1;
+        if (i > total) i = total;
+        const el = track.children[Math.min(i, track.children.length - 1)];
+        track.style.transform = 'translateX(' + -el.offsetLeft + 'px)';
+        if (i === total) {
+          // reached the cloned head — snap back to 0 invisibly after the glide
+          setTimeout(() => {
+            track.classList.add('no-anim');
+            i = 0;
+            track.style.transform = 'translateX(0px)';
+            void track.offsetWidth; // reflow so the snap never animates
+            track.classList.remove('no-anim');
+          }, 780);
+        }
+      };
+      const start = () => { if (!timer) timer = setInterval(slide, 4500); };
+      const stop = () => { clearInterval(timer); timer = null; };
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+      start();
+    });
+  })();
+</script>
+
+<style>
+  .reviews-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); }
+  .reviews-intro { color: var(--color-slate-500); font-size: 0.92rem; max-width: 64ch; margin-top: 8px; }
+  .reviews-viewport { margin-top: 20px; overflow: hidden; }
+  .reviews-track {
+    display: flex; gap: 14px; align-items: stretch;
+    transition: transform 0.72s cubic-bezier(0.33, 0.7, 0.3, 1);
+    will-change: transform;
+  }
+  .reviews-track.no-anim { transition: none; }
+  .review { display: flex; flex-direction: column; gap: 14px; flex: 0 0 calc((100% - 28px) / 3); margin: 0; }
+  .review--ph { border-style: dashed; border-color: var(--color-line-blue); background: var(--color-grey-25); }
+  .review-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .review-stars { display: inline-flex; gap: 2px; }
+  .star-on { color: #f5a623; }
+  .star-off { color: var(--color-line); }
+  .review blockquote { font-size: 0.88rem; color: var(--color-slate-500); flex: 1; }
+  .review figcaption { border-top: 1px solid var(--color-line); padding-top: 12px; font-size: 0.84rem; display: grid; gap: 2px; }
+  .review figcaption strong { color: var(--color-ink-900); }
+  .review-meta { color: var(--color-slate-400); font-size: 0.78rem; text-transform: capitalize; }
+  @media (max-width: 1023px) and (min-width: 641px) { .review { flex-basis: calc((100% - 14px) / 2); } }
+  @media (max-width: 640px) { .review { flex-basis: 100%; } }
+</style>

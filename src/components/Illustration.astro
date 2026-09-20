@@ -1,0 +1,24 @@
+---
+/**
+ * Inline-SVG spot illustrations (src/assets/illustrations/*.svg).
+ * Inlined with ?raw so they inherit page fonts, CSS animations and caching
+ * stays in the HTML (each is used exactly once per page). Decorative-by-use:
+ * callers place them beside labelled content, so they're aria-hidden.
+ */
+interface Props {
+  name:
+    | 'home-relocation' | 'office-relocation' | 'vehicle-transport'
+    | 'safe-secure' | 'professional-packing' | 'on-time-delivery'
+    | 'transparent-pricing' | 'support-24-7'
+    | 'moving-india' | 'moving-process' | 'new-beginning';
+  class?: string;
+}
+const { name, class: cls = '' } = Astro.props;
+
+const files = import.meta.glob('@/assets/illustrations/*.svg', { query: '?raw', import: 'default', eager: true });
+const key = Object.keys(files).find((k) => k.endsWith(`/${name}.svg`));
+if (!key) throw new Error(`Illustration not found: ${name}`);
+const svg = files[key] as string;
+const openTag = svg.slice(0, svg.indexOf('>') + 1).replace('<svg ', `<svg class="${cls}" aria-hidden="true" focusable="false" `);
+---
+<Fragment set:html={openTag + svg.slice(svg.indexOf('>') + 1)} />

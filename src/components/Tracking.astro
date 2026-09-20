@@ -1,0 +1,65 @@
+---
+import { ENV } from '@/consts';
+/**
+ * Measurement layer.
+ *
+ * HARD RULE (project performance budget): gtag.js loads with `async` in <head>
+ * — never via Partytown, never lazy — or Ads conversion attribution breaks.
+ * Non-essential scripts (Clarity) defer to requestIdleCallback / first input.
+ *
+ * The inline helpers here are ~1.2KB: UTM/gclid capture for the quote form's
+ * hidden fields, and delegated data-event tracking. No UI JS.
+ */
+const { gtagId, adsId, clarityId } = ENV;
+---
+{
+  gtagId && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`} />
+      <script
+        is:inline
+        set:html={`
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+/* Consent-mode-ready wrapper (India DPDP): defaults explicit, update callable. */
+gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});
+window.sfxConsent=function(v){gtag('consent','update',v)};
+gtag('config','${gtagId}',{send_page_view:true});
+${adsId ? `gtag('config','${adsId}');` : ''}
+window.sfxTrack=function(ev,params){try{gtag('event',ev,params||{})}catch(e){}};
+/* Capture attribution params once per session for the lead form's hidden fields. */
+(function(){try{
+  var q=new URLSearchParams(location.search),store=sessionStorage.getItem('sfx_attr');
+  store=store?JSON.parse(store):{};
+  var keys=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'],dirty=false;
+  keys.forEach(function(k){var v=q.get(k);if(v){store[k]=v;dirty=true}});
+  if(dirty||!store.landing){store.landing=store.landing||location.pathname;store.referrer=store.referrer||document.referrer;sessionStorage.setItem('sfx_attr',JSON.stringify(store))}
+  window.sfxAttr=function(){try{return JSON.parse(sessionStorage.getItem('sfx_attr')||'{}')}catch(e){return{}}};
+}catch(e){window.sfxAttr=function(){return{}}}}());
+/* Delegated click events: <a data-event="call_click" data-event-city="..."> */
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('[data-event]'):null;if(!t)return;
+  var p={};for(var i=0;i<t.attributes.length;i++){var a=t.attributes[i];
+    if(a.name.indexOf('data-event-')===0)p[a.name.slice(11).replace(/-/g,'_')]=a.value}
+  p.page=location.pathname;window.sfxTrack(t.getAttribute('data-event'),p);
+});
+`}
+      />
+    </>
+  )
+}
+{
+  clarityId && (
+    <script
+      is:inline
+      set:html={`
+/* Clarity is non-essential: deferred to idle time — never blocks LCP/INP. */
+(function(){function load(){if(window.__clarityLoaded)return;window.__clarityLoaded=1;
+  var s=document.createElement('script');s.src='https://www.clarity.ms/tag/${clarityId}';s.async=1;document.head.appendChild(s)}
+  if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:5000})}
+  else{window.addEventListener('load',function(){setTimeout(load,2000)})}
+  ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,load,{once:true,passive:true})});
+})()`}
+    />
+  )
+}

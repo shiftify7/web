@@ -1,0 +1,38 @@
+---
+import Icon from './Icon.astro';
+
+/** Native <details>/<summary> accordion — zero JavaScript by design. */
+interface Props {
+  faqs: readonly { q: string; a: string }[];
+  heading?: string;
+  intro?: string;
+}
+const { faqs, heading, intro } = Astro.props;
+---
+{
+  (heading || intro) && (
+    <div class="faq-head">
+      {heading && <h2>{heading}</h2>}
+      {intro && <p class="faq-intro">{intro}</p>}
+    </div>
+  )
+}
+<div class="faq">
+  {
+    faqs.map((f, i) => (
+      <details name="faq" open={i === 0}>
+        <summary>
+          {f.q}
+          <Icon name="plus" size={16} />
+        </summary>
+        <div class="faq-a">{f.a}</div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); margin-bottom: 8px; }
+  .faq-intro { color: var(--color-slate-500); font-size: 0.94rem; max-width: 64ch; margin-bottom: 18px; }
+  .faq { margin-top: 18px; }
+</style>

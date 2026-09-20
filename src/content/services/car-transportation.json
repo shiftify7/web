@@ -1,0 +1,21 @@
+{
+  "slug": "car-transportation",
+  "name": "Car Transportation",
+  "short": "Intercity car transport on dedicated carriers with documented condition reports at both ends.",
+  "icon": "car",
+  "description": "Your car moves on a proper car carrier — not driven, not roped onto a goods truck. Pickup starts with a joint condition report (photos, odometer, existing marks), the car is fastened with wheel chocks and straps for the corridor, and delivery closes against the same report. Club it with your household move or book it standalone.",
+  "features": [
+    { "title": "Condition report at both ends", "text": "Photographed, signed condition reports at pickup and delivery — including odometer reading — so any dispute has an objective baseline." },
+    { "title": "Dedicated car carriers", "text": "Cars travel on multi-car carriers with wheel strapping and chocking. The car is loaded once at origin and driven only on and off the carrier ramps." },
+    { "title": "Transit insurance", "text": "Declared-value transit cover is available and explained in writing — what's covered, what's excluded, and exactly how a claim works." },
+    { "title": "Club with your house move", "text": "Shipping the car alongside your household consignment on the same corridor avoids duplicate pickup logistics and keeps one coordinator on the whole move." }
+  ],
+  "faqs": [
+    { "q": "How is my car transported between cities?", "a": "On a dedicated multi-car carrier: the car is driven up the ramps, strapped at the wheels, and stays on the same carrier to destination. We do not drive customer cars between cities as a matter of policy." },
+    { "q": "What documents do I need to transport my car?", "a": "Keep the RC copy, insurance copy and a photo ID handy; for interstate moves the carrier documentation is handled by us. The owner (or an authorised person with a signed letter) should be present at pickup and delivery for the condition reports." },
+    { "q": "Can I keep personal items inside the car?", "a": "We recommend against it: loose items are not covered by transit insurance and add weight liability. Removable accessories (chargers, documents, toll tags) should come out before pickup — the condition report notes what's left inside." },
+    { "q": "How long does car transport from NCR to Mumbai or Bengaluru take?", "a": "Car carriers on the NCR–Mumbai corridor typically deliver in 3–5 days and NCR–Bengaluru in 5–7 days, as carriers run consolidation routes. You get a stated window at booking and coordinator updates en route." }
+  ],
+  "metaTitle": "Car Transport Service — Car Carrier, Insured | Shiftify",
+  "metaDescription": "Intercity car transportation on dedicated carriers with photographed condition reports and transit insurance. Delhi NCR, Mumbai, Bengaluru corridors."
+}

@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import Placeholder from '@/components/Placeholder.astro';
+import Icon from '@/components/Icon.astro';
+import { SITE } from '@/consts';
+import { movingCompanySchema, breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }];
+const mc = movingCompanySchema();
+const VALUES = [
+  { icon: 'receipt', title: 'A quote is a promise', text: 'Itemised written quotes. If the price ever changes, you hear why — before the work, never after the bill.' },
+  { icon: 'box', title: 'Your boxes are your life', text: 'Packing standards, labelled inventory and trained crews, because a carton of kitchenware is really a Sunday morning.' },
+  { icon: 'clock', title: 'On time, or told early', text: 'Delays happen in logistics; silence is a choice. You get updates before you need to ask.' },
+  { icon: 'shield-check', title: 'Verified, always', text: 'GST-registered business, documented crew verification, and reviews we never buy. Proof or nothing.' },
+] as const;
+---
+<BaseLayout
+  title="About Shiftify — Building Movers India Can Trust"
+  description="Why Shiftify exists: an honest operating model, written quotes, no-advance bookings and documented standards for an industry with a trust problem."
+  canonicalPath="/about/"
+  jsonLd={[...(mc ? [mc] : []), breadcrumbSchema(crumbs)]}
+  quoteHref="/#lead-section"
+>
+  <section class="section about-hero">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <span class="kicker" style="margin-top:18px;display:inline-flex">About Shiftify</span>
+      <h1>We're building the movers India can actually trust.</h1>
+      <div class="prose-sfx">
+        <p><Placeholder label="FOUNDER STORY — 2 PARAGRAPHS" /> The short version until the founders write the long one: Shiftify was started after one too many moves gone wrong — the doubled bill on the highway, the "insured" claim that meant nothing, the advance that vanished. Every process in this company exists to make those stories impossible.</p>
+        <p>
+          We operate a hybrid model: our own supervisor-led crews where we're strongest, and a carefully
+          vetted partner network for the rest of India. Partners are onboarded against written packing and
+          conduct standards, and every job — ours or a partner's — runs on the same Shiftify written quote,
+          documentation and escalation rules. If we can't serve your route to our standard, we'd rather
+          say so than fake it.
+        </p>
+      </div>
+      <div class="val-grid">
+        {VALUES.map((v) => (
+          <div class="val card card--pad-s">
+            <h2><Icon name={v.icon} size={17} />{v.title}</h2>
+            <p>{v.text}</p>
+          </div>
+        ))}
+      </div>
+      <div class="card about-reg">
+        <h2>Registered business</h2>
+        <p>
+          Legal entity: {SITE.legalEntity || <Placeholder label="LEGAL ENTITY" />} · GSTIN: {SITE.gstin || <Placeholder label="GSTIN" />}<br />
+          Registered office: {SITE.hqAddress || <Placeholder label="HQ ADDRESS" />}
+        </p>
+        <p class="note-sm">Certificates and registrations are published here as they are issued — nothing is claimed before it exists.</p>
+      </div>
+    </div>
+  </section>
+  <CTABand heading="Judge us on a written quote." sub="The fastest way to evaluate any mover: ask for the quote in writing. Ours arrives itemised." quoteHref="/#lead-section" />
+</BaseLayout>
+<style>
+  .about-hero h1 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -0.03em; margin: 12px 0 18px; }
+  .val-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 28px; }
+  .val h2 { font-size: 0.98rem; display: flex; gap: 10px; align-items: center; }
+  .val h2 svg { color: var(--color-blue-600); flex: none; }
+  .val p { font-size: 0.85rem; color: var(--color-slate-500); margin-top: 8px; }
+  .about-reg { margin-top: 28px; background: var(--color-blue-50); border-color: var(--color-line-blue); }
+  .about-reg h2 { font-size: 0.95rem; margin-bottom: 8px; }
+  .about-reg p { font-size: 0.88rem; color: var(--color-slate-500); }
+  .note-sm { font-size: 0.76rem !important; margin-top: 8px; }
+  @media (max-width: 720px) { .val-grid { grid-template-columns: 1fr; } }
+</style>
