@@ -1,0 +1,55 @@
+---
+import { ENV } from '@/consts';
+const { gtagId, adsId, clarityId } = ENV;
+---
+<script is:inline>
+window.dataLayer=window.dataLayer||[];
+window.sfxTrack=window.sfxTrack||function(ev,params){try{if(window.gtag)gtag('event',ev,params||{})}catch(e){}};
+window.sfxAttr=window.sfxAttr||function(){try{return JSON.parse(sessionStorage.getItem('sfx_attr')||'{}')}catch(e){return{}}};
+(function(){try{
+  var q=new URLSearchParams(location.search),store=sessionStorage.getItem('sfx_attr');
+  store=store?JSON.parse(store):{};
+  var keys=['gclid','gbraid','wbraid','utm_source','utm_medium','utm_campaign','utm_term','utm_content'],dirty=false;
+  keys.forEach(function(k){var v=q.get(k);if(v){store[k]=v;dirty=true}});
+  if(dirty||!store.landing){store.landing=store.landing||location.pathname;store.referrer=store.referrer||document.referrer;sessionStorage.setItem('sfx_attr',JSON.stringify(store))}
+}catch(e){}})();
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('[data-event]'):null;if(!t)return;
+  var p={};for(var i=0;i<t.attributes.length;i++){var a=t.attributes[i];
+    if(a.name.indexOf('data-event-')===0)p[a.name.slice(11).replace(/-/g,'_')]=a.value}
+  p.page=location.pathname;window.sfxTrack(t.getAttribute('data-event'),p);
+});
+</script>
+{
+  gtagId && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`} />
+      <script
+        is:inline
+        set:html={`
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});
+window.sfxConsent=function(v){gtag('consent','update',v)};
+gtag('config','${gtagId}',{send_page_view:true});
+${adsId ? `gtag('config','${adsId}');` : ''}
+window.sfxTrack=function(ev,params){try{gtag('event',ev,params||{})}catch(e){}};
+`}
+      />
+    </>
+  )
+}
+{
+  clarityId && (
+    <script
+      is:inline
+      set:html={`
+(function(){function load(){if(window.__clarityLoaded)return;window.__clarityLoaded=1;
+  var s=document.createElement('script');s.src='https://www.clarity.ms/tag/${clarityId}';s.async=1;document.head.appendChild(s)}
+  if('requestIdleCallback' in window){requestIdleCallback(load,{timeout:5000})}
+  else{window.addEventListener('load',function(){setTimeout(load,2000)})}
+  ['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,load,{once:true,passive:true})});
+})()`}
+    />
+  )
+}

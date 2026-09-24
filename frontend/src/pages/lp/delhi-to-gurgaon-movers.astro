@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeadForm from '@/components/islands/LeadForm';
+---
+<BaseLayout
+  title="Delhi to Gurgaon movers | Shiftify"
+  description="Household and office relocation from Delhi to Gurgaon. Written quote after survey — prices discussed directly."
+  canonicalPath="/lp/delhi-to-gurgaon-movers/"
+  noindex={true}
+  quoteHref="#lead-form"
+>
+  <section class="section">
+    <div class="wrap">
+      <h1>Delhi to Gurgaon movers</h1>
+      <p>Short-corridor NCR moves with a written quote. Share pickup and drop localities below.</p>
+      <div class="card" style="padding:20px;margin-top:22px">
+        <LeadForm client:load context={{ source: 'lp:delhi-gurgaon', fromCity: 'Delhi', fromState: 'Delhi', toCity: 'Gurgaon', toState: 'Haryana' }} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 10px 0 12px; }</style>

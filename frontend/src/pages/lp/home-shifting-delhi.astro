@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeadForm from '@/components/islands/LeadForm';
+---
+<BaseLayout
+  title="Home shifting in Delhi | Shiftify"
+  description="Home shifting in Delhi — packing, crew and a written quote. No public moving prices."
+  canonicalPath="/lp/home-shifting-delhi/"
+  noindex={true}
+  quoteHref="#lead-form"
+>
+  <section class="section">
+    <div class="wrap">
+      <h1>Home shifting in Delhi</h1>
+      <p>1 RK to 4 BHK+ household moves across Delhi. We contact you — quote discussed directly.</p>
+      <div class="card" style="padding:20px;margin-top:22px">
+        <LeadForm client:load context={{ source: 'lp:home-delhi', fromCity: 'Delhi', fromState: 'Delhi', service: 'house-shifting' }} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 10px 0 12px; }</style>

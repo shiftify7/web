@@ -1,0 +1,66 @@
+---
+import { cldSrcSet, cldUrl } from '@/lib/media';
+import { heroSlideshow, heroFirstSlide, HERO_FALLBACK } from '@/lib/heroSlideshow';
+import type { PublicMedia } from '@/lib/media';
+
+interface Props {
+  slides: PublicMedia[];
+}
+const { slides } = Astro.props;
+const first = heroFirstSlide(slides);
+const src = first.image.includes('res.cloudinary.com') ? cldUrl(first.image, 1600) : (first.image || HERO_FALLBACK);
+const runShow = heroSlideshow.enabled && heroSlideshow.autoplay && slides.length > 1;
+---
+<div class="hero-media" aria-hidden="true">
+  <img
+    class="hero-media__img is-on"
+    src={src}
+    {...(first.image.includes('res.cloudinary.com') ? { srcset: cldSrcSet(first.image, [768, 1024, 1440, 1600]), sizes: '100vw' } : {})}
+    width="1264"
+    height="848"
+    alt=""
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+  />
+  {runShow &&
+    slides.slice(1).map((s) => (
+      <img
+        class="hero-media__img"
+        src={cldUrl(s.url, 1600)}
+        {...(s.url.includes('res.cloudinary.com') ? { srcset: cldSrcSet(s.url, [768, 1024, 1440, 1600]), sizes: '100vw' } : {})}
+        alt={s.alt || ''}
+        width={s.width || 1600}
+        height={s.height || 900}
+        loading="lazy"
+        decoding="async"
+      />
+    ))}
+</div>
+
+<style>
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    pointer-events: none;
+  }
+  .hero-media__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 72% 40%;
+    opacity: 0;
+  }
+  .hero-media__img.is-on { opacity: 1; }
+  @media (max-width: 767.5px) {
+    .hero-media__img { object-position: 68% 32%; }
+  }
+</style>

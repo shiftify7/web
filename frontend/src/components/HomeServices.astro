@@ -1,0 +1,323 @@
+---
+import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  house: ImageMetadata;
+  office: ImageMetadata;
+  car: ImageMetadata;
+  bike: ImageMetadata;
+  storage: ImageMetadata;
+}
+const { house, office, car, bike, storage } = Astro.props;
+
+const cards = [
+  {
+    slug: 'house-shifting',
+    icon: 'home' as const,
+    title: 'House Shifting',
+    desc: 'Careful packing, loading and transportation for homes of every size.',
+    benefits: ['Trained crew', 'Quality packing', 'On-time delivery'],
+    img: house,
+    alt: 'Shiftify crew loading a branded truck outside a family home',
+  },
+  {
+    slug: 'office-relocation',
+    icon: 'bldg' as const,
+    title: 'Office Relocation',
+    desc: 'Move desks, equipment and workspaces with less disruption to your team.',
+    benefits: ['IT & equipment handling', 'Systematic packing', 'Flexible scheduling'],
+    img: office,
+    alt: 'Shiftify movers packing desks and equipment in an office',
+  },
+  {
+    slug: 'car-transportation',
+    icon: 'car' as const,
+    title: 'Car Transportation',
+    desc: 'Safe vehicle movement with careful loading and secure transportation.',
+    benefits: ['Secure loading', 'Regular updates', 'Door-to-door options'],
+    img: car,
+    alt: 'Car being loaded onto a Shiftify vehicle carrier',
+  },
+  {
+    slug: 'bike-transportation',
+    icon: 'bike' as const,
+    title: 'Bike Transportation',
+    desc: 'Careful two-wheeler handling from pickup through delivery.',
+    benefits: ['Protective packing', 'Safe loading & tie-down', 'Door-to-door delivery'],
+    img: bike,
+    alt: 'Motorcycle being loaded into a Shiftify transport truck',
+  },
+];
+---
+
+<div class="wd">
+  <div class="wd-head">
+    <div>
+      <span class="kicker">What we do</span>
+      <h2>House, office, vehicles, storage</h2>
+    </div>
+    <a class="sec-link wd-all" href="/services/">All services →</a>
+  </div>
+
+  <div class="wd-grid">
+    {cards.map((c) => (
+      <article class="wd-card">
+        <a class="wd-photo" href={`/services/${c.slug}/`}>
+          <img src={c.img.src} width={c.img.width} height={c.img.height} alt={c.alt} loading="lazy" decoding="async" />
+        </a>
+        <div class="wd-body">
+          <h3>
+            <Icon name={c.icon} size={18} />
+            {c.title}
+          </h3>
+          <p>{c.desc}</p>
+          <ul>
+            {c.benefits.map((b) => (
+              <li>
+                <Icon name="check" size={15} />
+                {b}
+              </li>
+            ))}
+          </ul>
+          <a class="wd-more" href={`/services/${c.slug}/`}>
+            View details
+            <Icon name="arrow" size={14} />
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <article class="wd-store">
+    <div class="wd-store-copy">
+      <span class="wd-idx">05 / 06</span>
+      <h3>
+        <Icon name="ware" size={20} />
+        Storage &amp; Warehousing
+      </h3>
+      <p>Short- and long-term household storage in sealed, inventoried units — between leases, renovations or postings.</p>
+      <ul>
+        <li><Icon name="check" size={15} />Packed to move standard, then sealed</li>
+        <li><Icon name="check" size={15} />Box-level inventory</li>
+        <li><Icon name="check" size={15} />Flexible durations</li>
+      </ul>
+      <div class="wd-store-ctas">
+        <a class="wd-more" href="/services/storage-warehousing/">
+          Service details
+          <Icon name="arrow" size={14} />
+        </a>
+        <a class="btn btn--blue" href="/#hero" data-event="quote_cta_click" data-event-position="home-storage">Get a Free Quote</a>
+      </div>
+    </div>
+    <figure class="wd-store-fig">
+      <img
+        src={storage.src}
+        width={storage.width}
+        height={storage.height}
+        alt="Shiftify storage warehouse with inventoried moving cartons"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+  </article>
+</div>
+
+<style>
+  .wd-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: clamp(32px, 4.5vw, 48px);
+    flex-wrap: wrap;
+  }
+  .wd-head h2 {
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    letter-spacing: -0.03em;
+    margin-top: 10px;
+  }
+  .wd-all { white-space: nowrap; font-weight: 600; }
+  .wd-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .wd-card {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    transition: border-color 200ms ease;
+  }
+  .wd-card:hover { border-color: var(--color-line-blue); }
+  .wd-photo {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: var(--color-blue-50);
+  }
+  .wd-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 200ms ease;
+  }
+  .wd-card:hover .wd-photo img { transform: scale(1.03); }
+  .wd-body { padding: 18px 18px 20px; display: grid; gap: 10px; flex: 1; }
+  .wd-body h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.02rem;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .wd-body h3 :global(svg) { color: var(--color-blue-600); flex: none; }
+  .wd-body p { margin: 0; font-size: 0.88rem; color: var(--color-slate-500); line-height: 1.55; }
+  .wd-body ul, .wd-store ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .wd-body li, .wd-store li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--color-navy-800);
+  }
+  .wd-body li :global(svg), .wd-store li :global(svg) { color: var(--color-blue-600); flex: none; margin-top: 2px; }
+  .wd-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-blue-600);
+  }
+  .wd-more :global(svg) { transition: transform 180ms ease; }
+  .wd-more:hover :global(svg) { transform: translateX(3px); }
+  .wd-store {
+    margin-top: clamp(48px, 7vw, 80px);
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: stretch;
+    background: #eef4ff;
+    border: 1px solid var(--color-line-blue);
+    border-radius: 18px;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .wd-idx {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-blue-600);
+  }
+  .wd-idx::after {
+    content: "";
+    width: 36px;
+    height: 2px;
+    background: var(--color-blue-600);
+  }
+  .wd-store-copy {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+    padding: clamp(22px, 3.2vw, 40px) clamp(20px, 2.8vw, 36px);
+    align-content: center;
+  }
+  .wd-store-copy h3 {
+    font-size: clamp(1.55rem, 2.8vw, 2.15rem);
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--color-ink-900);
+  }
+  .wd-store-copy p {
+    margin: 0;
+    color: var(--color-slate-500);
+    font-size: 0.95rem;
+    max-width: 46ch;
+    line-height: 1.6;
+  }
+  .wd-tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .wd-tile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-navy-800);
+    line-height: 1.35;
+  }
+  .wd-tile-ico {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--color-blue-600);
+    border: 1px solid rgba(37, 99, 235, 0.12);
+  }
+  .wd-store-ctas { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
+  .wd-store-btn,
+  .wd-store-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .wd-store-btn { background: var(--color-blue-600); color: #fff; }
+  .wd-store-btn:hover { background: var(--color-navy-800); }
+  .wd-store-ghost {
+    background: #fff;
+    color: var(--color-navy-800);
+    border: 1px solid var(--color-line);
+  }
+  .wd-store-ghost:hover { border-color: var(--color-blue-600); color: var(--color-blue-600); }
+  .wd-store-fig {
+    margin: 0;
+    min-width: 0;
+    height: 100%;
+    clip-path: polygon(11% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .wd-store-fig img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 55% 50%;
+  }
+  @media (max-width: 1100px) {
+    .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wd-tiles { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .wd-grid { grid-template-columns: minmax(0, 1fr); }
+    .wd-store { grid-template-columns: 1fr; }
+    .wd-store-fig { clip-path: none; min-height: 220px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wd-card, .wd-photo img, .wd-more :global(svg) { transition: none; }
+    .wd-card:hover .wd-photo img { transform: none; }
+  }
+</style>

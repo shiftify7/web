@@ -1,0 +1,12 @@
+---
+import PhoneLink from './islands/PhoneLink';
+
+interface Props {
+  withIcon?: boolean;
+  label?: string;
+  class?: string;
+  dark?: boolean;
+}
+const { withIcon = false, label, class: cls = '' } = Astro.props;
+---
+<PhoneLink client:load withIcon={withIcon} label={label} class={cls} />

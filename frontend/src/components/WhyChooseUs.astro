@@ -1,0 +1,48 @@
+---
+import { USP_CARDS } from '@/consts';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+}
+const { heading = 'Why choose Shiftify', intro } = Astro.props;
+---
+<div class="usp-head">
+  <h2>{heading}</h2>
+  {intro && <p class="usp-intro">{intro}</p>}
+</div>
+<ol class="usp-list">
+  {USP_CARDS.map((c, i) => (
+    <li class="usp-row">
+      <span class="usp-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      <div>
+        <h3>{c.title}</h3>
+        <p>{c.text}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .usp-head h2 { font-size: clamp(1.35rem, 2.4vw, 1.7rem); }
+  .usp-intro { color: var(--color-slate-500); font-size: 0.94rem; max-width: 58ch; margin-top: 8px; }
+  .usp-list {
+    list-style: none; margin: 28px 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .usp-row {
+    display: grid; grid-template-columns: 2.4rem 1fr; gap: 12px;
+    padding: 22px 20px 22px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .usp-row:nth-child(odd) { padding-right: 28px; border-right: 1px solid var(--color-line); }
+  .usp-row:nth-child(even) { padding-left: 28px; }
+  .usp-n { font-size: 0.78rem; font-weight: 700; color: var(--color-blue-600); font-variant-numeric: tabular-nums; padding-top: 3px; }
+  .usp-row h3 { font-size: 1rem; margin: 0 0 6px; }
+  .usp-row p { font-size: 0.88rem; color: var(--color-slate-500); margin: 0; max-width: 42ch; }
+  @media (max-width: 720px) {
+    .usp-list { grid-template-columns: 1fr; }
+    .usp-row:nth-child(odd), .usp-row:nth-child(even) { padding-left: 0; padding-right: 0; border-right: 0; }
+  }
+</style>

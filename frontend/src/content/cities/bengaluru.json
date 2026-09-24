@@ -1,0 +1,141 @@
+{
+  "slug": "bengaluru",
+  "name": "Bengaluru",
+  "aliases": [
+    "Bangalore"
+  ],
+  "state": "Karnataka",
+  "tier": 1,
+  "lat": 12.9716,
+  "lng": 77.5946,
+  "hasBranch": false,
+  "phone": "",
+  "localities": [
+    {
+      "name": "Whitefield",
+      "slug": "whitefield",
+      "pincode": "560066",
+      "intro": "Whitefield's ITPL-side towers and gated campuses run formal association move processes — lift slots, padding and gatehouse registers. Traffic on the ITPL approach decides when a 8 km hop actually finishes, so local loads start early.",
+      "highlights": [
+        "Association intimation 1–3 days ahead with vehicle and crew details is standard kit",
+        "Service elevators need booked slots and padding; missed slots can push the move a day",
+        "Load before 8 a.m. so the truck clears the ITPL / Hope Farm approaches before office peak"
+      ]
+    },
+    {
+      "name": "Electronic City",
+      "slug": "electronic-city",
+      "pincode": "560100",
+      "intro": "Electronic City Phase 1–2 mixes campus apartments with industrial-edge housing. Toll and Hosur Road timing matter more than packing time on intercity days; associations still want a daytime lift window.",
+      "highlights": [
+        "Campus apartments book service lifts against a daylight roster — evenings are rarely allowed",
+        "Intercity loads leave before Hosur Road office traffic, or they sit at the elevated corridor",
+        "Phase 2 inner layouts need the approach checked for parked two-wheelers on move morning"
+      ]
+    },
+    {
+      "name": "Koramangala",
+      "slug": "koramangala",
+      "pincode": "560034",
+      "intro": "Koramangala's 4th–8th Block mix of independent floors and boutique apartments is access-first: inner roads clog by brunch hours, and many buildings have no service lift. A pre-move survey here actually changes crew size.",
+      "highlights": [
+        "Independent floors without lifts need honest stair-carry time in the written quote",
+        "80 Feet Road staging works early; inner block parking fills by mid-morning",
+        "Society-managed apartments still want a short gate intimation even on a same-block move"
+      ]
+    },
+    {
+      "name": "Indiranagar",
+      "slug": "indiranagar",
+      "pincode": "560038",
+      "intro": "Indiranagar's 100 Feet Road is easy for trucks; the cross-layout inner streets are not. Cafe-belt traffic and resident parking mean we stage on the main road and shuttle the last stretch when the survey says so.",
+      "highlights": [
+        "Main-road buildings take a 407 or container; inner cross layouts often need a shuttle tempo",
+        "Weekday 7–9 a.m. is the practical loading window before 100 Feet Road retail traffic",
+        "Older independent houses typically have no lift — inventory floor count honestly"
+      ]
+    },
+    {
+      "name": "Jayanagar",
+      "slug": "jayanagar",
+      "pincode": "560041",
+      "intro": "Jayanagar and the South Bengaluru grid still have pre-container lanes near 4th Block complex. Family houses with narrow approaches are common; we plan a small covered tempo when a 32-ft truck cannot reach the gate.",
+      "highlights": [
+        "4th Block market hours close some approaches — loading is planned around them",
+        "Plotted homes with no lift dominate; crew size follows floor count, not a phone guess",
+        "South-end intercity loads prefer an early exit toward NICE / Bannerghatta rather than Silk Board"
+      ]
+    }
+  ],
+  "topRoutes": [
+    "delhi-to-bengaluru",
+    "mumbai-to-bengaluru",
+    "gurgaon-to-bengaluru"
+  ],
+  "localRules": [
+    {
+      "title": "Apartment association approvals",
+      "detail": "Bengaluru's large apartment complexes — along ORR, Whitefield, Electronic City, Sarjapur Road — require a move intimation to the owners' association or facility manager, with vehicle and crew details, typically 1–3 days ahead. Gated villa communities (Sarjapur, Devanahalli belts) additionally register every commercial entry at the gatehouse."
+    },
+    {
+      "title": "Service-lift booking and padding",
+      "detail": "Towers commonly insist on service-elevator slots with mandatory lift padding; some associations add a refundable common-area deposit. Moves are usually restricted to daytime windows (often 9 a.m.–6 p.m.), and the larger the campus, the earlier the lift roster fills up — book the lift when you book the truck."
+    },
+    {
+      "title": "Traffic-led slot planning",
+      "detail": "Bengaluru's corridors — Silk Board, ORR, Whitefield's ITPL approach, Bannerghatta Road — can turn a 10 km move into a two-hour crawl after 8:30 a.m. Local moves are scheduled with early loading so the truck crosses choke points before peak; intercity loads leave the city limits before office traffic builds."
+    },
+    {
+      "title": "Old-city lane access",
+      "detail": "Basavanagudi, Malleshwaram's inner lanes, Chickpet and Shivajinagar-era market streets were built for bullock carts, not containers. Moves in these pockets plan a shuttle-tempo stage from door to the truck on the nearest main road, timed around market hours."
+    },
+    {
+      "title": "Rain, borewells and basement ramps",
+      "detail": "Pre-monsoon and monsoon showers slow afternoons May–October, so waterproof top-layer packing is standard. Many campuses have steep basement ramps with ~2.1–3 m height limits; full-size containers stage at the gate, which makes lobby carry distance the honest variable in a Bengaluru quote."
+    }
+  ],
+  "seasonality": {
+    "peak": "March–June and December–January job-switch windows",
+    "note": "Bengaluru's rental churn follows the IT job calendar: March–June is the heaviest stretch, with a second pulse around December–January appraisals. End-of-month weekends are the tightest; mid-month weekday mornings are the easiest and cheapest slots in the city."
+  },
+  "landmarks": [
+    "MG Road",
+    "Kempegowda Bus Station (Majestic)",
+    "Electronic City",
+    "Whitefield",
+    "Lalbagh"
+  ],
+  "faqs": [
+    {
+      "q": "What do packers and movers charge in Bengaluru?",
+      "a": "It depends on your inventory, floors, lift access, packing level and distance. We run a free survey (video or doorstep) and then confirm an itemised written quote — no advance is needed to book."
+    },
+    {
+      "q": "Why do Bengaluru movers insist on early-morning starts?",
+      "a": "Traffic. Crossing Silk Board, ORR or the Whitefield approach after the office rush can double transit time even on a short local move. Loading at 7–8 a.m. lets the truck clear choke points before peak, which keeps your delivery window honest."
+    },
+    {
+      "q": "My apartment needs lift padding and a lift slot — do you manage that?",
+      "a": "Yes. We coordinate the service-elevator slot with your association's roster and carry padding as standard kit. The refundable common-area deposit some associations take stays between you and the association — we handle the sign-off inspection with the facility team."
+    },
+    {
+      "q": "Can you handle moves out of Bengaluru's large gated campuses?",
+      "a": "Routinely. Large campuses mean gatehouse registration for the truck and long indoor carries from tower to vehicle; both are planned in the survey and appear clearly in the written quote — long carries are never billed as surprise extras."
+    },
+    {
+      "q": "Do I pay anything in advance for a Bengaluru booking?",
+      "a": "No booking advance. The itemised written quote comes first and payment follows its terms — a deliberate stance in a category where advance-payment complaints are common."
+    },
+    {
+      "q": "Do you move cars and bikes from Bengaluru to other cities?",
+      "a": "Yes — cars on dedicated carriers, bikes as crated cargo, both with condition reports. On the Bengaluru–Mumbai and Bengaluru–Delhi corridors vehicles can be clubbed with your household consignment or sent standalone."
+    }
+  ],
+  "nearbyCities": [
+    "mumbai"
+  ],
+  "intro": "Bengaluru moves are a scheduling exercise: apartment associations run lift rosters, gated campuses register every truck, and the city's traffic decides when a 10 km move actually finishes. From Whitefield's towers to the pre-container lanes of Basavanagudi, Shiftify plans the association approval, the lift slot and the traffic window before the first carton is taped.",
+  "whyLocal": "Ask anyone who has shifted in Bengaluru what went wrong and you'll hear the same two stories: the lift wasn't available, or the truck sat in traffic for two hours. Both are planning failures, and both are avoidable. The city's apartment complexes — ORR, Whitefield, Electronic City, Sarjapur Road — run formal move processes: association intimation one to three days ahead, service-elevator slots with padding, daytime move windows, and gatehouse registration of every commercial vehicle. Large campuses add the third variable nobody quotes honestly: the indoor carry from your tower lobby to a truck that cannot enter the basement can exceed a hundred metres, and that effort belongs in the written quote. Traffic is the other half of Bengaluru moving wisdom — local moves load early so Silk Board and the IT-corridor approaches are crossed before the rush, and intercity loads clear the city before office hours. Older Bengaluru is a different map: Basavanagudi, Malleshwaram's inner lanes and the Chickpet market grid need shuttle tempos and market-hour timing. Your Bengaluru quote from us spells out the association formalities, the lift slot, the carry plan and the traffic window — because those, not the boxes, decide your moving day here.",
+  "metaTitle": "Packers and Movers in Bengaluru | Shiftify",
+  "metaDescription": "GST-registered packers and movers in Bengaluru (Bangalore). Apartment lift-slot planning, written quotes after survey, transit insurance."
+}

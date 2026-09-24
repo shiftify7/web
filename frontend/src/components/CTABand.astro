@@ -1,0 +1,57 @@
+---
+import WhatsAppButton from './WhatsAppButton.astro';
+import PhoneNumber from './PhoneNumber.astro';
+import Illustration from './Illustration.astro';
+import Icon from './Icon.astro';
+import { SITE } from '@/consts';
+
+/** Dark closing CTA band. */
+interface Props {
+  heading: string;
+  sub?: string;
+  city?: string;
+  route?: { from: string; to: string };
+  quoteHref?: string;
+  illustration?: 'new-beginning';
+}
+const { heading, sub, city, route, quoteHref = '#quote', illustration } = Astro.props;
+---
+<section class="ctaband">
+  <div class="wrap ctaband-in">
+    <div>
+      <h2>{heading}</h2>
+      {sub && <p class="ctaband-sub">{sub}</p>}
+      <p class="ctaband-trust">
+        {[SITE.gstin ? 'GST verified' : '', SITE.insuranceCover ? 'Transit insured' : '', 'No advance payment', SITE.supportHours ? `${SITE.supportHours} support` : ''].filter(Boolean).join(' · ')}
+      </p>
+    </div>
+    <div class="ctaband-actions">
+      <WhatsAppButton city={city} route={route} variant="white" size="lg" />
+      <a href={quoteHref} class="btn btn--outline-w btn--lg" data-event="quote_cta_click" data-event-position="cta-band">Get a written quote</a>
+      <span class="ctaband-phone">
+        <Icon name="phone" size={18} />
+        <PhoneNumber dark />
+      </span>
+    </div>
+    {illustration && (
+      <div class="ctaband-fig float-y" aria-hidden="true">
+        <Illustration name={illustration} />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .ctaband { background: var(--color-ink-900); color: #fff; padding-block: clamp(40px, 5vw, 64px); }
+  .ctaband-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px; }
+  .ctaband h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); max-width: 22ch; letter-spacing: -0.03em; }
+  .ctaband-sub { color: #9fb0ce; font-size: 0.95rem; max-width: 52ch; margin-top: 10px; }
+  .ctaband-trust { color: #7e96c8; font-size: 0.8rem; margin-top: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ctaband-actions { display: flex; flex-direction: column; gap: 12px; align-items: stretch; min-width: 260px; }
+  .ctaband-phone { color: #bcd3ff; font-weight: 600; font-size: 0.9rem; display: inline-flex; gap: 8px; align-items: center; justify-content: center; }
+  .ctaband-phone :global(a) { color: inherit; }
+  .ctaband-phone :global(svg) { width: 18px; height: 18px; flex: none; max-width: none; overflow: visible; }
+  .ctaband-fig { flex: none; width: 300px; max-width: 30vw; margin-left: auto; }
+  .ctaband-fig svg { width: 100%; height: auto; display: block; }
+  @media (max-width: 1080px) { .ctaband-fig { display: none; } }
+</style>

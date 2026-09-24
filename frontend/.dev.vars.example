@@ -1,0 +1,6 @@
+# Local emulation only: `cp .dev.vars.example .dev.vars` then `wrangler pages dev dist`.
+# Production values go in the Cloudflare dashboard (Pages project → Settings → Environment variables).
+LEAD_EMAIL_TO=shiftify@gmail.com
+RESEND_API_KEY=
+RESEND_FROM=Shiftify <leads@your-verified-domain.tld>
+RESEND_TO=

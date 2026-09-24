@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" role="img" aria-label="Shiftify network across India">
+  <path fill="#dce7fb" d="M168 14 214 30l28-14 33 12 9 22 31 8 19 26-4 32 24 26-8 30 12 24-20 24 2 30-24 12-14 26-24 4-13 24-26 2-18 20-17-12-26 6-12-20-26-8-4-26-20-16 6-30-25-6 10-28-16-18 10-28-6-28 16-18 2-30 20-16-4-30 22-20-2-32 16-24-4-28 24-10Z"/>
+  <path class="route-dash" fill="none" stroke="#2563eb" stroke-linecap="round" stroke-width="4" d="M155 230q90-90 200-95" stroke-dasharray="2 14"/>
+  <path class="route-dash" fill="none" stroke="#2563eb" stroke-linecap="round" stroke-width="4" d="M345 145q10 80-40 165" stroke-dasharray="2 14"/>
+  <g>
+    <path fill="#2563eb" d="M330 108c0-11 8.8-20 19.5-20S369 97 369 108c0 14.5-15.5 25.5-19.5 30.5-4-5-19.5-16-19.5-30.5Z"/>
+    <circle cx="349.5" cy="108" r="5.5" fill="#fff"/>
+    <text x="378" y="114" fill="#151e60" font-size="15" font-weight="700" font-family="inherit">Delhi</text>
+  </g>
+  <g>
+    <path fill="#2563eb" d="M298 138c0-10 8-18 18-18s18 8 18 18c0 13-14.5 23-18 27.5-3.5-4.5-18-14.5-18-27.5Z"/>
+    <circle cx="316" cy="138" r="5" fill="#fff"/>
+    <text x="342" y="156" fill="#151e60" font-size="14" font-weight="700" font-family="inherit">Gurgaon</text>
+  </g>
+  <g>
+    <path fill="#f97316" d="M372 142c0-10 8-18 18-18s18 8 18 18c0 13-14.5 23-18 27.5-3.5-4.5-18-14.5-18-27.5Z"/>
+    <circle cx="390" cy="142" r="5" fill="#fff"/>
+    <text x="414" y="148" fill="#151e60" font-size="14" font-weight="700" font-family="inherit">Noida</text>
+  </g>
+  <g>
+    <path fill="#2563eb" d="M128 218c0-11 8.8-20 19.5-20S167 207 167 218c0 14.5-15.5 25.5-19.5 30.5-4-5-19.5-16-19.5-30.5Z"/>
+    <circle cx="147.5" cy="218" r="5.5" fill="#fff"/>
+    <text x="78" y="214" fill="#151e60" font-size="15" font-weight="700" font-family="inherit">Mumbai</text>
+  </g>
+  <g>
+    <path fill="#2563eb" d="M286 308c0-11 8.8-20 19.5-20S325 297 325 308c0 14.5-15.5 25.5-19.5 30.5-4-5-19.5-16-19.5-30.5Z"/>
+    <circle cx="305.5" cy="308" r="5.5" fill="#fff"/>
+    <text x="332" y="314" fill="#151e60" font-size="15" font-weight="700" font-family="inherit">Bengaluru</text>
+  </g>
+</svg>

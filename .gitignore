@@ -1,19 +1,95 @@
-# dependencies / build
-node_modules/
-dist/
-.astro/
+# -----------------------------------------------------------------------------
+# Shiftify monorepo
+# -----------------------------------------------------------------------------
 
-# env & secrets
+# Dependencies — applies to frontend, CRM, backend, and any future package.
+**/node_modules/
+
+# Build output and framework caches.
+**/dist/
+**/build/
+**/.astro/
+**/.vite/
+**/.output/
+**/.next/
+**/.nuxt/
+**/.svelte-kit/
+**/.parcel-cache/
+**/.turbo/
+**/.cache/
+**/.wrangler/
+
+# Test, coverage, and local tooling output.
+**/coverage/
+**/.nyc_output/
+**/.lighthouseci/
+**/.eslintcache
+**/.stylelintcache
+**/.tsbuildinfo
+
+# Environment files and local secrets.
 .env
 .env.*
 !.env.example
+!.env.*.example
 .dev.vars
+.dev.vars.*
+!.dev.vars.example
 
-# Lighthouse CI
-.lighthouseci/
+# Local certificates, private keys, and credential files.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.crt
+*.cer
+*.der
+credentials.json
+service-account*.json
 
-# OS / editor
+# Logs and runtime files.
+*.log
+logs/
+*.pid
+*.pid.lock
+*.seed
+*.tgz
+
+# OS metadata.
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor and IDE files.
 .vscode/*
 !.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files and local exports.
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+
+# Package-manager caches and local stores.
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+
+# Generated local reports and screenshots.
+reports/
+.screenshots/
+
+# Cloudflare/local deployment state.
+.wrangler/

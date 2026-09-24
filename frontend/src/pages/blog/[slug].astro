@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import BlogPost from '@/components/islands/BlogPost';
+import { SEED_BLOGS, seedBySlug } from '@/data/seed-blogs';
+import '@/styles/article.css';
+
+export function getStaticPaths() {
+  return SEED_BLOGS.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const seed = slug ? seedBySlug(slug) : null;
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Blog', path: '/blog/' },
+  { name: seed?.title ?? slug ?? 'Article', path: `/blog/${slug}/` },
+];
+---
+<BaseLayout
+  title={seed?.seoTitle || seed?.title || 'Shiftify article'}
+  description={seed?.seoDescription || seed?.excerpt || 'Moving guide from Shiftify Packers and Movers.'}
+  canonicalPath={`/blog/${slug}/`}
+  ogType="article"
+>
+  <section class="section">
+    <div class="wrap article-wrap">
+      <Breadcrumbs items={crumbs} />
+      <BlogPost client:load slug={slug ?? ''} />
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .article-wrap { max-width: 760px; }
+</style>

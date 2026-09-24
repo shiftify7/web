@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { telHref } from '@/consts';
+---
+<BaseLayout
+  title="Packers and Movers in Gurgaon — Get a Quote | Shiftify"
+  description="Packers and movers in Gurgaon / Gurugram. Share your sector — we survey and quote in writing."
+  canonicalPath="/lp/packers-movers-gurgaon/"
+  noindex={true}
+  quoteHref="#lead-form"
+>
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Gurgaon · Google campaign</span>
+      <h1>Packers and movers in Gurgaon</h1>
+      <p>Sectors, DLF phases and Sohna Road — local or intercity. No public price list.</p>
+      <div class="cta-row"><WhatsAppButton city="Gurgaon" /><a class="btn btn--ghost" href={telHref() || '/contact/'} data-event="call_click">Call Now</a></div>
+      <div class="card" style="padding:20px;margin-top:22px">
+        <LeadForm client:load context={{ source: 'lp:gurgaon', fromCity: 'Gurgaon', fromState: 'Haryana' }} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 10px 0 12px; }
+  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+</style>

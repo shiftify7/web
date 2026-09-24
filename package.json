@@ -1,32 +1,12 @@
 {
-  "name": "shiftify-site",
-  "version": "0.1.0",
+  "name": "shiftify",
   "private": true,
-  "type": "module",
-  "description": "Shiftify — Packers & Movers, India. Programmatic static marketing site (Astro 5 + Tailwind v4 + Preact islands) on Cloudflare Pages.",
+  "description": "Shiftify monorepo — frontend, CRM, backend",
   "scripts": {
-    "dev": "astro dev --host 0.0.0.0",
-    "start": "astro dev --host 0.0.0.0",
-    "assets": "node scripts/prepare-assets.mjs",
-    "validate": "node scripts/validate-content.mjs",
-    "build": "npm run validate && astro build",
-    "preview": "astro preview --host 0.0.0.0",
-    "check": "astro check",
-    "lhci": "lhci autorun"
-  },
-  "dependencies": {
-    "@astrojs/mdx": "^4.3.0",
-    "@astrojs/preact": "^4.1.0",
-    "astro": "^5.13.0",
-    "gsap": "^3.15.0",
-    "preact": "^10.26.0",
-    "sharp": "^0.34.0"
-  },
-  "devDependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@lhci/cli": "^0.14.0",
-    "@tailwindcss/vite": "^4.1.0",
-    "tailwindcss": "^4.1.0",
-    "typescript": "^5.9.3"
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:crm": "npm run dev --prefix crm-frontend",
+    "dev:backend": "npm start --prefix backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:crm": "npm run build --prefix crm-frontend"
   }
 }

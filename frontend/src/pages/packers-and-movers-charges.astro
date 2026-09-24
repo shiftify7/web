@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import { breadcrumbSchema, faqSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'How quoting works', path: '/packers-and-movers-charges/' }];
+const chargeFaqs = [
+  { q: 'Why don\'t you publish moving prices online?', a: 'Volume, access, packing grade and calendar all change the number. A public table would either under-quote and surprise you later, or over-quote and scare you off. We survey, then send a written quote.' },
+  { q: 'Do packers and movers charge GST?', a: 'GST-registered movers charge GST on their services and quote it on the invoice. A mover who “saves you the GST” is telling you the invoice — and any insurance claim — may not exist either.' },
+  { q: 'Is transit insurance included?', a: 'It is a real product with a real premium. Cover, insurer and claims process are written down in your quote — never implied as “free insurance”.' },
+  { q: 'How can I reduce my moving cost?', a: 'Declutter before the survey, pick a mid-month weekday, and book ahead in peak season. Cutting packing quality is the saving that backfires.' },
+];
+---
+<BaseLayout
+  title="How Shiftify quoting works | Shiftify"
+  description="Shiftify does not publish generic moving prices. Share your route, we survey, then send a written itemised quote — no booking advance."
+  canonicalPath="/packers-and-movers-charges/"
+  jsonLd={[faqSchema(chargeFaqs), breadcrumbSchema(crumbs)]}
+  quoteHref="#lead-form"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <h1>How quoting works — no public price list</h1>
+      <p class="lead">
+        We do not display moving prices on this website. Every move is quoted after a free survey
+        so the written number matches your inventory, access and date.
+      </p>
+      <div class="quote-steps">
+        <div class="card card--pad-s"><strong>1 · Tell us your route</strong><p>The form takes about 30 seconds.</p></div>
+        <div class="card card--pad-s"><strong>2 · Free survey</strong><p>Video or doorstep — your choice.</p></div>
+        <div class="card card--pad-s"><strong>3 · Written quote</strong><p>Itemised. Discussed with you directly. No public calculator.</p></div>
+      </div>
+      <div class="card" style="padding:20px;margin-top:24px">
+        <LeadForm client:load context={{ source: 'charges-guide' }} />
+      </div>
+      <h2 class="tbl-h">FAQ</h2>
+      <div class="faq">
+        {chargeFaqs.map((f) => (
+          <details name="faq">
+            <summary>{f.q}</summary>
+            <div class="faq-a">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CTABand heading="Want a written quote?" sub="Share your route — we'll send a written quote after a short survey." quoteHref="#lead-form" />
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); letter-spacing: -0.03em; margin: 14px 0 12px; }
+  .lead { color: var(--color-slate-500); font-size: 0.94rem; max-width: 74ch; }
+  .quote-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .tbl-h { font-size: 1.15rem; margin: 34px 0 14px; }
+  @media (max-width: 760px) { .quote-steps { grid-template-columns: 1fr; } }
+</style>

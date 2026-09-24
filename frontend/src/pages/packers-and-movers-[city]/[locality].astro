@@ -1,0 +1,192 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import TrustBar from '@/components/TrustBar.astro';
+import FAQAccordion from '@/components/FAQAccordion.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import PhoneNumber from '@/components/PhoneNumber.astro';
+import Icon from '@/components/Icon.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import { allLocalityPages } from '@/lib/data';
+import { faqSchema, breadcrumbSchema } from '@/lib/schema';
+import { SITE } from '@/consts';
+
+export const getStaticPaths = (async () => {
+  const pages = await allLocalityPages();
+  return pages.map(({ city, locality }) => ({
+    params: { city: city.data.slug, locality: locality.slug },
+    props: { city, locality },
+  }));
+}) satisfies GetStaticPaths;
+
+const { city, locality } = Astro.props;
+const d = city.data;
+
+const siblingLocalities = d.localities.filter((l) => l.slug !== locality.slug).slice(0, 6);
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: `Packers and Movers in ${d.name}`, path: `/packers-and-movers-${d.slug}/` },
+  { name: locality.name, path: `/packers-and-movers-${d.slug}/${locality.slug}/` },
+];
+
+const serviceNode = {
+  '@type': 'Service',
+  '@id': `${SITE.domain}/packers-and-movers-${d.slug}/${locality.slug}/#service`,
+  serviceType: 'Packers and Movers',
+  name: `Packers and Movers in ${locality.name}, ${d.name}`,
+  provider: { '@id': `${SITE.domain}/#organization` },
+  areaServed: { '@type': 'Place', name: `${locality.name}, ${d.name} ${locality.pincode}` },
+  url: `${SITE.domain}/packers-and-movers-${d.slug}/${locality.slug}/`,
+};
+const jsonLd = [serviceNode, faqSchema(d.faqs), breadcrumbSchema(crumbs)];
+---
+<BaseLayout
+  title={`Packers and Movers in ${locality.name}, ${d.name} | Shiftify`}
+  description={`Local packers and movers for ${locality.name} (${locality.pincode}), ${d.name}. Free survey, written quotes, society-compliant crews, no advance.`}
+  canonicalPath={`/packers-and-movers-${d.slug}/${locality.slug}/`}
+  jsonLd={jsonLd}
+  stickyCity={`${locality.name}, ${d.name}`}
+  quoteHref="#lead-form"
+>
+  <section class="loc-hero">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} class="city-crumbs" />
+      <div class="cp-hero">
+        <div class="cp-copy">
+          <span class="kicker">{d.name} · {locality.pincode}</span>
+          <h1>Packers and Movers in {locality.name}, {d.name}</h1>
+          <p class="cp-sub">{locality.intro}</p>
+          <div class="cp-cta">
+            <WhatsAppButton city={`${locality.name}, ${d.name}`} />
+            <PhoneNumber class="btn btn--ghost" withIcon />
+          </div>
+        </div>
+        <div class="loc-facts card">
+          <h2 class="loc-facts-h">Moving in {locality.name} — the specifics</h2>
+          <ul>
+            {locality.highlights.map((h) => <li><Icon name="check" size={15} />{h}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--flat"><div class="wrap"><TrustBar /></div></section>
+
+  <section class="section">
+    <div class="wrap quote-wrap2">
+      <div>
+        <span class="kicker">Free quote</span>
+        <h2 class="flat-h">Get your {locality.name} move quoted in writing</h2>
+        <p class="quote-sub">Tell us your route inside {locality.name} (or out of it). A free survey follows, then a written, itemised quote — valid for your moving date, no advance needed.</p>
+        <div class="loc-prices card">
+          <h3>How your {locality.name} quote is built</h3>
+          <ul>
+            <li><strong>Free survey</strong><span>video call or doorstep — your choice</span></li>
+            <li><strong>Itemised quote</strong><span>labour · packing · transport · GST, one document</span></li>
+            <li><strong>No advance</strong><span>you pay on the written quote's terms</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="cp-form card">
+        <LeadForm client:load horizontal={false} context={{ source: `locality:${d.slug}/${locality.slug}`, fromCity: d.name, fromState: d.state, fromLocality: locality.name }} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">{d.name} rules apply</span>
+      <h2 class="flat-h">What your {locality.name} move inherits from {d.name}</h2>
+      <p class="quote-sub">Society permissions, vehicle access and seasonality are {d.name}-level logistics — read the full local guide on the city page.</p>
+      <div class="loc-rule-grid">
+        {d.localRules.slice(0, 4).map((r) => (
+          <div class="card card--pad-s">
+            <h3 class="loc-rule-t">{r.title}</h3>
+            <p class="loc-rule-p">{r.detail}</p>
+          </div>
+        ))}
+      </div>
+      <a class="sec-link" href={`/packers-and-movers-${d.slug}/#local-info`}>Full “Moving in {d.name}” guide →</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="flat-h">Nearby localities we serve in {d.name}</h2>
+      <div class="areas">
+        {
+          siblingLocalities.map((l) => (
+            <a class="area" href={`/packers-and-movers-${d.slug}/${l.slug}/`}>
+              <Icon name="pin" size={12} />{l.name} <small>{l.pincode}</small>
+            </a>
+          ))
+        }
+        <a class="area area--all" href={`/packers-and-movers-${d.slug}/`}><Icon name="route" size={12} />All of {d.name}</a>
+      </div>
+      <div class="loc-faq">
+        <FAQAccordion faqs={d.faqs.slice(0, 4)} heading={`${locality.name} moving FAQ`} />
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    heading={`Moving in or out of ${locality.name}?`}
+    sub="WhatsApp your tower or block name and home size — we'll share a written quote after survey."
+    city={`${locality.name}, ${d.name}`}
+    quoteHref="#lead-form"
+  />
+</BaseLayout>
+
+<style>
+  .loc-hero { padding: 22px 0 30px; background: var(--color-grey-25); }
+  .city-crumbs { margin-bottom: 18px; }
+  .cp-hero {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(20px, 3.5vw, 40px);
+    background: var(--color-blue-50); border: 1px solid var(--color-line-blue);
+    border-radius: var(--radius-m); padding: clamp(20px, 3.2vw, 34px); align-items: center;
+  }
+  .cp-copy h1 { font-size: clamp(1.5rem, 3vw, 2.1rem); letter-spacing: -0.03em; margin: 10px 0 12px; }
+  .cp-sub { color: var(--color-slate-500); font-size: 0.92rem; }
+  .cp-cta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .cp-cta .btn { min-height: 46px; padding: 11px 18px; font-size: 0.9rem; }
+  .loc-facts { align-self: stretch; }
+  .loc-facts-h { font-size: 0.95rem; margin-bottom: 12px; }
+  .loc-facts ul { list-style: none; display: grid; gap: 10px; font-size: 0.84rem; color: var(--color-slate-500); }
+  .loc-facts li { display: flex; gap: 10px; align-items: flex-start; }
+  .loc-facts svg { flex: none; color: var(--color-blue-600); margin-top: 3px; }
+  @media (max-width: 860px) { .cp-hero { grid-template-columns: 1fr; } }
+
+  .section--flat .wrap { padding-block: 6px; }
+  .flat-h { font-size: clamp(1.35rem, 2.5vw, 1.75rem); letter-spacing: -0.025em; margin-top: 12px; }
+  .quote-wrap2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3.5vw, 40px); align-items: start; }
+  .cp-form { min-width: 0; width: 100%; overflow: visible; }
+  .quote-sub { color: var(--color-slate-500); font-size: 0.92rem; margin-top: 10px; max-width: 56ch; }
+  .loc-prices { margin-top: 20px; padding: 18px 20px; }
+  .loc-prices h3 { font-size: 0.9rem; margin-bottom: 10px; }
+  .loc-prices ul { list-style: none; display: grid; gap: 8px; font-size: 0.88rem; }
+  .loc-prices li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--color-line); padding-bottom: 8px; }
+  .loc-prices li span { color: var(--color-navy-800); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .loc-note { font-size: 0.74rem; color: var(--color-slate-400); margin-top: 10px; }
+  @media (max-width: 860px) { .quote-wrap2 { grid-template-columns: 1fr; } }
+
+  .loc-rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0 16px; }
+  .loc-rule-t { font-size: 0.92rem; }
+  .loc-rule-p { font-size: 0.83rem; color: var(--color-slate-500); margin-top: 5px; }
+  @media (max-width: 720px) { .loc-rule-grid { grid-template-columns: 1fr; } }
+  .sec-link { color: var(--color-blue-600); font-weight: 600; font-size: 0.9rem; }
+
+  .areas { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .area {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--color-line); background: #fff; border-radius: var(--radius-xs);
+    padding: 9px 13px; font-size: 0.82rem; font-weight: 600; color: var(--color-ink-900);
+  }
+  .area:hover { border-color: var(--color-blue-600); }
+  .area small { color: var(--color-slate-400); font-weight: 500; }
+  .area--all { border-color: var(--color-line-blue); color: var(--color-navy-800); }
+  .loc-faq { margin-top: 34px; }
+</style>

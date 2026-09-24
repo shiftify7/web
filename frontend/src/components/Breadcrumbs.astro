@@ -1,0 +1,25 @@
+---
+interface Props {
+  items: readonly { name: string; path: string }[];
+  class?: string;
+}
+const { items, class: cls = '' } = Astro.props;
+---
+<nav class={`crumbs ${cls}`} aria-label="Breadcrumb">
+  {
+    items.map((it, i) => (
+      <span class="crumbs-item">
+        {i > 0 && (
+          <svg class="crumbs-chev" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m9 5.5 6.5 6.5L9 18.5" />
+          </svg>
+        )}
+        {i < items.length - 1 ? (
+          <a href={it.path}>{it.name}</a>
+        ) : (
+          <span aria-current="page">{it.name}</span>
+        )}
+      </span>
+    ))
+  }
+</nav>

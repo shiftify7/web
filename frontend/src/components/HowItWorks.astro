@@ -1,0 +1,158 @@
+---
+import type { ImageMetadata } from 'astro';
+import { cldSrcSet, cldUrl } from '@/lib/media';
+
+interface Props {
+  heading?: string;
+  visual?: ImageMetadata;
+  remoteUrl?: string;
+  remoteAlt?: string;
+}
+
+const {
+  heading = 'How moving with Shiftify works',
+  visual,
+  remoteUrl = '',
+  remoteAlt = 'Shiftify moving process',
+} = Astro.props;
+const showFig = Boolean(remoteUrl || visual);
+const imageSrc = remoteUrl ? cldUrl(remoteUrl, 900) : visual?.src;
+const imageSrcSet = remoteUrl ? cldSrcSet(remoteUrl, [480, 768, 900]) : '';
+
+const STEPS = [
+  {
+    n: '01',
+    title: 'Share your details',
+    text: 'Cities, home size, and date. On the form, WhatsApp, or a call. Two minutes, no commitment.',
+  },
+  {
+    n: '02',
+    title: 'Get a transparent quote',
+    text: 'A short survey, then an itemised written quote. Every line explained; no obligation to book.',
+  },
+  {
+    n: '03',
+    title: 'Confirm your booking',
+    text: 'No booking advance. We lock the date, crew, vehicle, and society lift slots where needed.',
+  },
+  {
+    n: '04',
+    title: 'We move you',
+    text: 'Supervisor-led packing, sealed loading, proactive updates, and a bill that matches the written quote.',
+  },
+] as const;
+---
+
+<section class="proc section section--tint" id="the-process">
+  <div class="wrap">
+    <div class={`proc-grid${showFig ? '' : ' proc-grid--solo'}`}>
+      {showFig && <span class="kicker proc-kicker">The process</span>}
+      {!showFig && <span class="kicker">The process</span>}
+      {
+        showFig && (
+          <figure class="proc-fig">
+            <img
+              src={imageSrc}
+              {...(imageSrcSet ? { srcset: imageSrcSet, sizes: '(max-width: 900px) 92vw, 44vw' } : {})}
+              width={visual?.width || 700}
+              height={visual?.height || 700}
+              alt={remoteAlt}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        )
+      }
+      <div class="proc-body">
+        <h2 class="proc-h">{heading}</h2>
+        <ol class="proc-rail">
+          {
+            STEPS.map((s) => (
+              <li class="proc-step">
+                <span class="proc-n" aria-hidden="true">{s.n}</span>
+                <div>
+                  <h3 class="proc-title">{s.title}</h3>
+                  <p class="proc-text">{s.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proc { overflow: clip; padding-block: clamp(56px, 8vw, 96px); }
+  .proc-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.44fr) minmax(0, 0.56fr);
+    grid-template-areas:
+      "kicker body"
+      "fig body";
+    gap: 8px clamp(20px, 3.5vw, 36px);
+    align-items: end;
+    margin-top: 0;
+  }
+  .proc-kicker { grid-area: kicker; align-self: start; margin-bottom: 8px; }
+  .proc-fig { grid-area: fig; }
+  .proc-body { grid-area: body; }
+  .proc-grid--solo { grid-template-columns: 1fr; grid-template-areas: none; }
+  .proc-body { min-width: 0; }
+  .proc-h {
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+  }
+  .proc-fig {
+    margin: 0;
+    width: 100%;
+    max-width: 700px;
+    align-self: end;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .proc-fig img { display: block; width: 100%; height: auto; object-fit: contain; }
+
+  .proc-rail { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .proc-step {
+    display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+    padding: 12px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    border-radius: 0;
+    outline: none;
+  }
+  .proc-n {
+    display: grid; place-items: center;
+    width: 34px; height: 34px;
+    background: var(--color-navy-800); color: #fff;
+    font-size: 0.78rem; font-weight: 700;
+    border-radius: var(--radius-xs, 8px);
+    font-variant-numeric: tabular-nums;
+  }
+  .proc-title { margin: 2px 0 0; font-size: 0.96rem; }
+  .proc-text { margin: 4px 0 0; font-size: 0.84rem; line-height: 1.55; color: var(--color-slate-500); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .proc-step { transition: border-color 180ms ease; }
+    .proc-step:hover { border-color: var(--color-line-blue); }
+  }
+  .proc-step:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-blue-600); }
+
+  @media (max-width: 900px) {
+    .proc-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "kicker"
+        "fig"
+        "body";
+      align-items: stretch;
+    }
+    .proc-fig { max-width: 420px; width: 92%; margin-inline: auto; }
+  }
+</style>

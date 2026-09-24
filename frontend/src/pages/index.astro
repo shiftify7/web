@@ -1,0 +1,496 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import WhyChooseUs from '@/components/WhyChooseUs.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import Testimonials from '@/components/Testimonials.astro';
+import FAQAccordion from '@/components/FAQAccordion.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import HeroQuoteBar from '@/components/islands/HeroQuoteBar';
+import { capitalCityHits, cityToHits, serviceableCityHits } from '@/lib/locations';
+import delhiLm from '@/assets/locations/delhi.webp';
+import gurgaonLm from '@/assets/locations/gurgaon.webp';
+import noidaLm from '@/assets/locations/noida.webp';
+import mumbaiLm from '@/assets/locations/mumbai.webp';
+import bengaluruLm from '@/assets/locations/bengaluru.webp';
+import HomeServices from '@/components/HomeServices.astro';
+import TrustBenefitsCarousel from '@/components/TrustBenefitsCarousel.astro';
+import PlacesCarousel from '@/components/islands/PlacesCarousel';
+import '@/styles/places-carousel.css';
+import processAppPng from '@/assets/promo/process-app.png';
+import supportHeadsetPng from '@/assets/promo/support-headset.png';
+
+import type { ImageMetadata } from 'astro';
+import { allCities, allTestimonials } from '@/lib/data';
+import { movingCompanySchema } from '@/lib/schema';
+import { telHref } from '@/consts';
+import { firstLandingImage, getLandingImages, cldUrl } from '@/lib/media';
+import { heroFirstSlide, HERO_FALLBACK } from '@/lib/heroSlideshow';
+import HeroPhoto from '@/components/HeroPhoto.astro';
+import { getCollection } from 'astro:content';
+
+const [cities, testimonials, faqs] = await Promise.all([
+  allCities(),
+  allTestimonials(),
+  getCollection('faqs'),
+]);
+
+// ── Services showpiece carousel ──────────────────────────────
+// One service at a time; photography-style branded scenes imported from
+// src/assets/services (converted from the supplied master PNGs).
+const svcAssets = import.meta.glob<{ default: ImageMetadata }>('../assets/services/*.webp', { eager: true });
+const svcImg = (slug: string, w: number) => {
+  const asset = svcAssets[`../assets/services/${slug}-${w}.webp`];
+  if (!asset) throw new Error(`Missing service asset: ${slug}-${w}.webp`);
+  return asset.default;
+};
+
+
+const mc = movingCompanySchema();
+const processMedia = await firstLandingImage('PROCESS');
+const heroPhotos = await getLandingImages('HERO');
+const heroFirst = heroFirstSlide(heroPhotos);
+const heroPreload = heroFirst.image.includes('res.cloudinary.com')
+  ? cldUrl(heroFirst.image, 1600)
+  : (heroFirst.image || HERO_FALLBACK);
+const locationHits = [
+  ...cities.flatMap((c) => cityToHits({
+    slug: c.data.slug,
+    name: c.data.name,
+    state: c.data.state,
+    aliases: c.data.aliases,
+    localities: (c.data.localities || []).map((l) => ({ name: l.name, slug: l.slug })),
+  })),
+  ...serviceableCityHits(cities.map((c) => c.data.slug)),
+  ...capitalCityHits(cities.map((c) => c.data.slug)),
+];
+const landmarks = {
+  delhi: { src: delhiLm.src, alt: 'India Gate in New Delhi' },
+  gurgaon: { src: gurgaonLm.src, alt: 'DLF Cyber Hub skyline in Gurugram' },
+  noida: { src: noidaLm.src, alt: 'Noida Sector 78–76 skyline' },
+  mumbai: { src: mumbaiLm.src, alt: 'Gateway of India in Mumbai' },
+  bengaluru: { src: bengaluruLm.src, alt: 'Vidhana Soudha in Bengaluru' },
+};
+const PLACE_BLURB: Record<string, string> = {
+  delhi: 'Local moving support across Delhi, from established neighbourhoods to apartment communities across the NCT.',
+  gurgaon: "House and office relocation support across Gurgaon's residential sectors and business districts.",
+  noida: "Moving support across Noida's residential sectors, societies and surrounding areas.",
+  mumbai: 'Relocation support across Mumbai for homes, offices and vehicle movement.',
+  bengaluru: "Moving support across Bengaluru's residential neighbourhoods and growing business districts.",
+};
+const PLACE_ORDER = ['delhi', 'gurgaon', 'noida', 'mumbai', 'bengaluru'];
+const lmMeta: Record<string, ImageMetadata> = { delhi: delhiLm, gurgaon: gurgaonLm, noida: noidaLm, mumbai: mumbaiLm, bengaluru: bengaluruLm };
+const placeSlides = [...cities]
+  .sort((a, b) => PLACE_ORDER.indexOf(a.data.slug) - PLACE_ORDER.indexOf(b.data.slug))
+  .map((c) => {
+    const lm = lmMeta[c.data.slug];
+    const shot = landmarks[c.data.slug as keyof typeof landmarks];
+    return {
+      slug: c.data.slug,
+      city: c.data.name,
+      state: c.data.state,
+      href: `/packers-and-movers-${c.data.slug}/`,
+      desc: PLACE_BLURB[c.data.slug] || `Packers and movers serving homes, offices and vehicles across ${c.data.name}.`,
+      img: {
+        src: lm?.src || shot.src,
+        alt: shot?.alt || `${c.data.name} landmark`,
+        width: lm?.width || 480,
+        height: lm?.height || 320,
+      },
+    };
+  });
+---
+<noscript></noscript>
+
+
+<BaseLayout
+  title="Packers and Movers in Delhi, Gurgaon and NCR | Shiftify"
+  description="Looking for packers and movers in NCR? Shiftify handles home, office and vehicle moves in Delhi, Gurgaon and Noida, plus Mumbai and Bengaluru. Written quote after a survey. No booking advance."
+  canonicalPath="/"
+  jsonLd={mc ? [mc] : []}
+  quoteHref="#hero"
+>
+  <link slot="head" rel="preload" as="image" href={heroPreload} type="image/webp" fetchpriority="high" />
+
+  {/* ── 1 · Hero ─────────────────────────────────────────────── */}
+  <section class="hero" id="hero">
+    <HeroPhoto slides={heroPhotos} />
+    <div class="hero-bg-soft" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="kicker h-anim">Packers and movers, NCR</span>
+        <h1 class="h-anim">Best Packers and Movers in NCR for Hassle-Free Relocation</h1>
+        <p class="hero-sub h-anim">
+          Share the route, the date, and what needs to go. After a short survey you get an itemised written quote. One point of contact. No booking advance.
+        </p>
+        <div class="hero-cta h-anim">
+          <WhatsAppButton size="lg" label="WhatsApp Us" />
+          <a
+            href={telHref() || '#hero'}
+            class="btn btn--ghost btn--lg"
+            data-event="call_click"
+            data-event-position="hero"
+          >
+            <Icon name="phone" size={18} />Call Now
+          </a>
+        </div>
+        <ul class="hero-trust">
+          <li><Icon name="shield" size={16} />Safe &amp; Secure Moving</li>
+          <li><Icon name="clock" size={16} />On-Time Delivery</li>
+          <li><Icon name="user" size={16} />Professional Trained Staff</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap hero-quote-wrap" id="lead-section">
+      <HeroQuoteBar client:load locations={locationHits} landmarks={landmarks} />
+    </div>
+    <TrustBenefitsCarousel />
+  </section>
+
+  {/* ── 3 · Services ─────────────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap">
+      <HomeServices
+        house={svcImg('house-shifting', 600)}
+        office={svcImg('office-relocation', 600)}
+        car={svcImg('car-transportation', 600)}
+        bike={svcImg('bike-transportation', 600)}
+        storage={svcImg('storage-warehousing', 1024)}
+      />
+    </div>
+  </section>
+
+  {/* ── 4 · Why choose us ────────────────────────────────────── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">The Shiftify standard</span>
+      <WhyChooseUs intro="Four things we put in writing. If we cannot keep one of them on your route, we say so before you book." />
+    </div>
+  </section>
+
+  {/* ── 5 · Cities / network ─────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap">
+      <PlacesCarousel client:load items={placeSlides} />
+      <nav class="plc-seo" aria-label="Cities we serve">
+        {placeSlides.map((p) => (
+          <a href={p.href}>{p.city}</a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {/* ── 6 · How it works ─────────────────────────────────────── */}
+  <HowItWorks
+    visual={processAppPng}
+    remoteUrl={processMedia?.url || ''}
+    remoteAlt={processMedia?.alt || 'Shiftify moving process'}
+  />
+
+  {/* ── 7 · Quote CTA panel ───────────── */}
+  <section class="section">
+    <div class="wrap cta-panel card card--pad-s">
+      <div>
+        <span class="kicker">Talk to a moving expert</span>
+        <h2>A person plans the move. The quote is in writing.</h2>
+        <p>Share the route and date. We survey, then quote. You pay nothing until the move is confirmed.</p>
+      </div>
+      <a href="#hero" class="btn btn--blue btn--lg cta-panel-btn" data-event="quote_cta_click" data-event-position="home-mid">
+        <Icon name="receipt" size={18} />Get a Free Quote
+      </a>
+    </div>
+  </section>
+
+  {/* ── 8 · Reviews ──────────────────────────────────────────── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">Reviews</span>
+      <Testimonials
+        testimonials={testimonials}
+        heading="What customers tell us after the move"
+        intro="We do not buy reviews. If a quote is published here, it came from someone we moved."
+      />
+    </div>
+  </section>
+
+  {/* ── 9 · FAQ ──────────────────────────────────────────────── */}
+  <section class="section">
+    <div class="wrap faq-home">
+      <div class="faq-aside card">
+        <div class="faq-support">
+          <img
+            src={supportHeadsetPng.src}
+            width={supportHeadsetPng.width}
+            height={supportHeadsetPng.height}
+            alt="Shiftify customer support"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <h2>A question before you book?</h2>
+        <p>WhatsApp the route and date. A person replies during support hours.</p>
+        <WhatsAppButton />
+      </div>
+      <div class="faq-main">
+        <FAQAccordion faqs={faqs.slice(0, 6).map((f) => f.data)} heading="Frequently asked questions" />
+        <a class="sec-link" href="/faq/">Read the full FAQ →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 10 · Final CTA ───────────────────────────────────────── */}
+  <CTABand
+    heading="Get the quote in writing first."
+    sub="Itemised lines, no booking advance, one supervisor on move day."
+    quoteHref="#hero"
+  />
+</BaseLayout>
+
+
+
+<style>
+  /* ── hero: image-led, single-viewport composition ─────────── */
+  .hero {
+    scroll-margin-top: 80px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: calc(100svh - 68px);
+    padding-top: clamp(28px, 5svh, 46px);
+    padding-bottom: 0;
+    isolation: isolate;
+    box-sizing: border-box;
+    overflow-x: clip;
+  }
+  .hero-bg-soft {
+    position: absolute;
+    z-index: 1;
+    inset: 0 auto 0 0;
+    width: min(58%, 760px);
+    max-width: 100%;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.75) 38%,
+        rgba(255, 255, 255, 0.34) 70%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    /* The blur is deliberately confined to the copy side of the photo. */
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 62%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 62%, transparent 100%);
+  }
+  .hero-grid,
+  .hero-quote-wrap { position: relative; z-index: 2; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
+    width: 100%;
+    max-width: 1480px;
+    min-width: 0;
+    margin-inline: auto;
+    padding-inline: clamp(24px, 3.7vw, 64px);
+    box-sizing: border-box;
+    flex: 1 1 auto;
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 590px;
+    min-width: 0;
+    margin: 0;
+    padding-bottom: 8px;
+  }
+  .hero-quote-wrap {
+    width: min(1260px, calc(100% - 32px));
+    max-width: 1260px;
+    min-width: 0;
+    margin: auto auto 24px;
+    padding: 0;
+    box-sizing: border-box;
+    z-index: 6;
+  }
+  .hero-quote-wrap :global(.hqb) {
+    box-shadow: 0 18px 34px -24px rgba(7, 13, 31, 0.65);
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 4.1vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    margin: 10px 0 14px;
+    max-width: 590px;
+    text-wrap: pretty;
+  }
+  .hero-sub {
+    color: var(--color-slate-500);
+    font-size: clamp(0.95rem, 1.5vw, 1.06rem);
+    line-height: 1.5;
+    max-width: 520px;
+  }
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .hero-cta .btn {
+    min-height: 52px;
+    height: 52px;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+  .hero-cta .btn--lg { min-width: 180px; padding: 13px 22px; }
+  .hero-cta .btn--ghost { min-width: 164px; padding: 13px 20px; }
+  .hero-trust {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin: 18px 0 0;
+    padding: 0;
+    color: var(--color-navy-800);
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+  .hero-trust li { display: inline-flex; align-items: center; gap: 8px; }
+  .hero-trust :global(svg) { color: var(--color-blue-600); flex: none; }
+  @media (min-width: 1024px) and (max-height: 820px) {
+    .hero {
+      padding-top: clamp(28px, 5svh, 40px);
+    }
+    .hero h1 {
+      font-size: clamp(2.05rem, 3.8vw, 3.2rem);
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+    .hero-sub { font-size: 0.95rem; line-height: 1.42; }
+    .hero-cta { margin-top: 14px; }
+    .hero-cta .btn { min-height: 50px; height: 50px; }
+    .hero-trust { margin-top: 14px; }
+    .hero-quote-wrap { margin-bottom: 16px; padding-bottom: 0; }
+  }
+  @media (max-width: 1023.5px) {
+    .hero { min-height: 0; }
+    .hero-bg-soft {
+      inset: 0;
+      width: 100%;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.86) 0%,
+          rgba(255, 255, 255, 0.62) 48%,
+          rgba(255, 255, 255, 0.2) 100%
+        );
+      -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 76%, transparent 100%);
+      mask-image: linear-gradient(180deg, #000 0%, #000 76%, transparent 100%);
+    }
+    .hero-grid {
+      max-width: 100%;
+      padding-inline: clamp(20px, 4vw, 40px);
+    }
+    .hero-copy { max-width: 560px; }
+    .hero h1 { font-size: clamp(1.85rem, 5.2vw, 2.6rem); }
+    .hero-form { max-width: 100%; }
+  }
+  @media (max-width: 767.5px) {
+    /* Keep the small-screen hero image clean: no copy-side blur/veil or trust badges. */
+    .hero-bg-soft,
+    .hero-trust {
+      display: none;
+    }
+    .hero {
+      padding-top: 22px;
+      padding-bottom: 0;
+    }
+    .hero-grid { padding-inline: 16px; }
+    .hero-copy {
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 14px 12px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px -22px rgba(7, 13, 31, 0.6);
+    }
+    .hero h1 { color: var(--color-ink-950); }
+    .hero-sub { color: var(--color-ink-900); }
+    .hero-quote-wrap {
+      width: calc(100% - 32px);
+      margin: 8px auto 14px;
+      padding-bottom: 0;
+    }
+    .hero-cta { flex-direction: column; align-items: stretch; gap: 10px; }
+    .hero-cta .btn,
+    .hero-cta .btn--lg,
+    .hero-cta .btn--ghost {
+      width: 100%;
+      max-width: 360px;
+      min-width: 0;
+    }
+  }
+
+  /* ── quote ── */
+  .quote-wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+  .quote-side h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; margin: 12px 0 12px; }
+  .quote-side p { color: var(--color-slate-500); font-size: 0.94rem; }
+  .tick-list { list-style: none; margin-top: 18px; display: grid; gap: 10px; font-size: 0.9rem; font-weight: 600; color: var(--color-navy-800); }
+  .tick-list li { display: flex; gap: 10px; align-items: center; }
+  .tick-list svg { color: var(--color-blue-600); flex: none; }
+  @media (max-width: 900px) { .quote-wrap { grid-template-columns: 1fr; } }
+
+  /* ── services ── */
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; }
+  .sec-link { color: var(--color-blue-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+
+
+  /* ── quote CTA panel ── */
+  .cta-panel { display: flex; align-items: center; justify-content: space-between; gap: clamp(20px, 4vw, 48px); padding: clamp(24px, 4vw, 36px); }
+  .cta-panel h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); letter-spacing: -0.03em; margin: 12px 0 12px; }
+  .cta-panel p { color: var(--color-slate-500); font-size: 0.94rem; }
+  .cta-panel-more a { color: var(--color-blue-600); font-weight: 600; }
+  .cta-panel-btn { flex: none; }
+  @media (max-width: 900px) { .cta-panel { flex-direction: column; align-items: flex-start; } .cta-panel-btn { width: 100%; justify-content: center; } }
+  /* ── spot illustrations (src/assets/illustrations — inline SVG, no JS) ── */
+  .india-head { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.9fr); gap: clamp(18px, 4vw, 44px); align-items: center; }
+  .india-sub { color: var(--color-slate-500); font-size: 0.92rem; max-width: 58ch; margin-top: 2px; }
+  .india-fig { border-radius: var(--radius-m); }
+  .india-fig img { width: 100%; height: auto; display: block; border-radius: var(--radius-m); }
+
+  .faq-support { width: 110px; margin: 0 0 22px; background: transparent; }
+  .faq-support img { width: 100%; height: auto; display: block; object-fit: contain; }
+  @media (max-width: 900px) { .faq-support { width: 88px; margin-bottom: 20px; } }
+
+
+  /* subtle decorative motion remains CSS-owned and is disabled for reduced motion */
+  .float-y { animation: floaty 7s ease-in-out infinite alternate; }
+  @keyframes floaty { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+  .anim-spin { transform-origin: 52px 48px; animation: wheelturn 18s linear infinite; }
+  @keyframes wheelturn { to { transform: rotate(1turn); } }
+  .route-dash { stroke-dashoffset: 0; animation: dashflow 3.2s linear infinite; }
+  @keyframes dashflow { to { stroke-dashoffset: -64; } }
+  @media (prefers-reduced-motion: reduce) {
+    .float-y, .anim-spin, .route-dash { animation: none !important; }
+  }
+
+  /* ── home faq ── */
+  .faq-home { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 24px; align-items: start; }
+  .faq-aside { position: sticky; top: 88px; display: grid; gap: 10px; justify-items: start; }
+  .faq-aside svg { color: var(--color-blue-600); }
+  .faq-aside h2 { font-size: 1.15rem; }
+  .faq-aside p { font-size: 0.86rem; color: var(--color-slate-500); }
+  .faq-main .sec-link { display: inline-block; margin-top: 16px; }
+  @media (max-width: 900px) { .faq-home { grid-template-columns: 1fr; } .faq-aside { position: static; } }
+</style>

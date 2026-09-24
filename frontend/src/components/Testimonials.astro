@@ -1,0 +1,46 @@
+---
+import ReviewCrawler from './islands/ReviewCrawler';
+
+interface Props {
+  testimonials?: unknown[];
+  heading?: string;
+  intro?: string;
+}
+const { heading = 'What customers say', intro } = Astro.props;
+---
+
+<div class="reviews-head">
+  <h2>{heading}</h2>
+  {intro && <p class="reviews-intro">{intro}</p>}
+</div>
+<ReviewCrawler client:load />
+
+<style is:global>
+  .reviews-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); }
+  .reviews-intro { color: var(--color-slate-500); font-size: 0.92rem; max-width: 64ch; margin-top: 8px; }
+  .reviews-viewport { margin-top: 20px; overflow: hidden; }
+  .reviews-track {
+    display: flex; gap: 14px; align-items: stretch;
+    transition: transform 0.72s cubic-bezier(0.33, 0.7, 0.3, 1);
+    will-change: transform;
+  }
+  .reviews-track.no-anim { transition: none; }
+  .review { display: flex; flex-direction: column; gap: 14px; flex: 0 0 calc((100% - 28px) / 3); margin: 0; }
+  .review-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .review-stars { display: inline-flex; gap: 2px; }
+  .star-on { color: #f5a623; }
+  .star-off { color: var(--color-line, #e2e8f0); }
+  .review blockquote { font-size: 0.88rem; color: var(--color-slate-500); flex: 1; }
+  .review figcaption { border-top: 1px solid var(--color-line); padding-top: 12px; font-size: 0.84rem; display: grid; gap: 2px; }
+  .review figcaption strong { color: var(--color-ink-900); }
+  .review-meta { color: var(--color-slate-400); font-size: 0.78rem; text-transform: capitalize; }
+  .review-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; display: block; }
+  .review-av--fb { overflow: hidden; }
+  .sfx-ann {
+    display: flex; gap: 12px; align-items: center;
+    padding: 8px 16px; font-size: 0.88rem; font-weight: 600;
+  }
+  .sfx-ann a { color: inherit; text-decoration: underline; }
+  @media (max-width: 1023px) and (min-width: 641px) { .review { flex-basis: calc((100% - 14px) / 2); } }
+  @media (max-width: 640px) { .review { flex-basis: 100%; } }
+</style>

@@ -1,0 +1,396 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import TrustBar from '@/components/TrustBar.astro';
+import WhyChooseUs from '@/components/WhyChooseUs.astro';
+import HowItWorks from '@/components/HowItWorks.astro';
+import Testimonials from '@/components/Testimonials.astro';
+import FAQAccordion from '@/components/FAQAccordion.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import PhoneNumber from '@/components/PhoneNumber.astro';
+import Icon from '@/components/Icon.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import {
+  allCities, allServices, getCity, routesFrom, routesTouching,
+  testimonialsFor, allLocalityPages, routeSlug,
+} from '@/lib/data';
+import { cityServiceSchema, faqSchema, breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (async () => {
+  const cities = await allCities();
+  return cities.map((city) => ({
+    params: { city: city.data.slug },
+    props: { city },
+  }));
+}) satisfies GetStaticPaths;
+
+const { city } = Astro.props;
+const d = city.data;
+
+const [services, routes, touchingRoutes, testimonials, localityPages] = await Promise.all([
+  allServices(),
+  routesFrom(d.slug),
+  routesTouching(d.slug),
+  testimonialsFor(d.slug),
+  allLocalityPages(),
+]);
+
+const nearbyCities = (
+  await Promise.all(d.nearbyCities.map((s) => getCity(s)))
+).filter((c) => c !== undefined);
+
+// Fallback: if a city lists no departing routes, show routes it participates in
+const popularRoutes = routes.length > 0 ? routes : touchingRoutes.slice(0, 4);
+const cityLocalityPages = localityPages.filter((lp) => lp.city.data.slug === d.slug);
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Cities', path: '/cities/' },
+  { name: `Packers and Movers in ${d.name}`, path: `/packers-and-movers-${d.slug}/` },
+];
+const jsonLd = [...cityServiceSchema(city), faqSchema(d.faqs), breadcrumbSchema(crumbs)];
+---
+<BaseLayout
+  title={d.metaTitle}
+  description={d.metaDescription}
+  canonicalPath={`/packers-and-movers-${d.slug}/`}
+  jsonLd={jsonLd}
+  stickyCity={d.name}
+  quoteHref="#lead-form"
+>
+  {/* ── 1 · Hero: keyword H1 + trust subhead + inline quick-quote ── */}
+  <section class="city-hero">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} class="city-crumbs" />
+      <div class="cp-hero">
+        <div class="cp-copy">
+          <span class="kicker">{d.name} · {d.state}</span>
+          <h1>Packers and Movers in {d.name}</h1>
+          <p class="cp-sub">{d.intro}</p>
+          {(d.slug === 'delhi' || d.slug === 'gurgaon' || d.slug === 'noida') && (
+            <p class="cp-sub" style="margin-top:10px">Looking for packers and movers in NCR? Share your {d.name} locality and date. After a survey we send a written quote for home, office or vehicle relocation.</p>
+          )}
+          <div class="cp-cta">
+            <a href="#lead-form" class="btn btn--blue" data-event="quote_cta_click" data-event-position="city-hero">Get a Free Quote</a>
+            <WhatsAppButton city={d.name} />
+            <PhoneNumber class="btn btn--ghost" withIcon label={undefined} />
+
+          </div>
+        </div>
+        <div class="cp-form card">
+          <LeadForm client:load horizontal={false} context={{ source: `city:${d.slug}`, fromCity: d.name, fromState: d.state }} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 2 · Trust bar ── */}
+  <section class="section--flat">
+    <div class="wrap"><TrustBar /></div>
+  </section>
+
+  {/* ── 3 · Why choose Shiftify ── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">The Shiftify standard</span>
+      <WhyChooseUs heading={`Why ${d.name} chooses Shiftify`} intro={d.whyLocal.split('.')[0] + '.'} />
+    </div>
+  </section>
+
+  {/* ── 4 · Services in this city ── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">Services in {d.name}</span>
+      <div class="sec-head">
+        <h2>House shifting, office relocation, and vehicle transport in {d.name}</h2>
+        <a class="sec-link" href="/services/">All services →</a>
+      </div>
+      <div class="svc-grid">
+        {
+          services.map((s) => (
+            <a class="svc card card--pad-s" href={`/services/${s.data.slug}/`}>
+              <span class="svc-ic"><Icon name={s.data.icon} size={20} /></span>
+              <h3>{s.data.name} in {d.name}</h3>
+              <p>{s.data.short}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* ── 5 · How quoting works (no public price lists — quote after survey) ── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Fair, written pricing</span>
+      <h2 class="flat-h">No rates pasted on a wall. A quote built for your move.</h2>
+      <p class="quote-expl">
+        Every move in {d.name} is different — floors, lifts, distance, packing volume, vehicle. So we don't publish
+        generic tables: we run a free survey (video or doorstep), then give you a written, itemised quote that
+        stays valid for your moving date. That's the number you compare — not a guess on a website.
+      </p>
+      <div class="quote-steps">
+        <div class="qstep card card--pad-s"><strong>1 · Tell us your route</strong><p>Local or intercity — the form above takes 30 seconds.</p></div>
+        <div class="qstep card card--pad-s"><strong>2 · Free survey</strong><p>On video call or at your door — whatever suits you.</p></div>
+        <div class="qstep card card--pad-s"><strong>3 · Written quote</strong><p>Itemised, all-inclusive, no advance needed to book.</p></div>
+      </div>
+      <a href="#lead-form" class="btn btn--blue btn--lg calc-cta" data-event="quote_cta_click" data-event-position="city-mid">
+        <Icon name="receipt" size={18} />Get a Free Quote
+      </a>
+    </div>
+  </section>
+
+  {/* ── 7 · How it works ── */}
+  <HowItWorks heading={`How moving in ${d.name} works`} />
+
+  {/* ── 8 · Areas we serve ── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">Coverage</span>
+      <h2 class="flat-h">Areas we serve in {d.name}</h2>
+      {
+        cityLocalityPages.length > 0 ? (
+          <div class="areas">
+            {cityLocalityPages.map((lp) => (
+              <a class="area" href={`/packers-and-movers-${d.slug}/${lp.locality.slug}/`}>
+                <Icon name="pin" size={12} />
+                {lp.locality.name} <small>{lp.locality.pincode}</small>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="areas-note">
+            We cover all of {d.name} ({d.aliases.length ? `including ${d.aliases.join(', ')}` : 'city-wide'}) — from {d.landmarks[0]} to {d.landmarks[d.landmarks.length - 1]} and everywhere between.
+            Detailed locality pages launch as our {d.name} operation grows.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {/* ── 9 · Popular routes ── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Intercity corridors</span>
+      <h2 class="flat-h">Popular routes {routes.length > 0 ? `from ${d.name}` : `via ${d.name}`}</h2>
+      <div class="route-list">
+        {
+          popularRoutes.map(async (r) => {
+            const fromC = await getCity(r.data.from);
+            const toC = await getCity(r.data.to);
+            const label = r.data.from === d.slug
+              ? `${d.name} → ${toC?.data.name ?? r.data.to}`
+              : `${fromC?.data.name ?? r.data.from} → ${d.name}`;
+            return (
+              <a class="route-pill" href={`/${await routeSlug(r)}/`}>
+                <span>
+                  {label}
+                  <small>~{r.data.distanceKm.toLocaleString('en-IN')} km · {r.data.transitDays[0]}–{r.data.transitDays[1]} days</small>
+                </span>
+                <Icon name="chev" size={16} />
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* ── 10 · UNIQUE LOCAL BLOCK (anti-doorway content) ── */}
+  <section class="section section--tint" id="local-info">
+    <div class="wrap">
+      <span class="kicker">Local knowledge</span>
+      <h2 class="flat-h">Moving in {d.name}: what you should know</h2>
+      <div class="rules-grid">
+        <div class="card rules-card">
+          <ul class="rules-list">
+            {
+              d.localRules.map((r) => (
+                <li>
+                  <Icon name="check" size={16} />
+                  <span><strong>{r.title}.</strong> {r.detail}</span>
+                </li>
+              ))
+            }
+            <li>
+              <Icon name="cal" size={16} />
+              <span><strong>Peak season: {d.seasonality.peak}.</strong> {d.seasonality.note}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card rules-dark">
+          <h3>The {d.name} quote standard</h3>
+          <ul class="rules-list">
+            <li><Icon name="check" size={16} /><span><strong>Written, itemised quote</strong><br /><span class="band">labour · packing · transport · GST — all in one document</span></span></li>
+            <li><Icon name="check" size={16} /><span><strong>No booking advance</strong><br /><span class="band">pay on the quote's terms, not before</span></span></li>
+            <li><Icon name="check" size={16} /><span><strong>Quote valid for your date</strong><br /><span class="band">what's written is what you pay</span></span></li>
+          </ul>
+          <p class="dark-note">Free survey first — video or doorstep, your choice.</p>
+        </div>
+      </div>
+      <div class="why-local card">
+        <h3>Why moving in {d.name} is different</h3>
+        <p>{d.whyLocal}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── 11 · Reviews ── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Customer reviews</span>
+      <Testimonials
+        testimonials={testimonials}
+        heading={`Reviews from ${d.name} customers`}
+        intro={`Reviews from moves we have handled in ${d.name}. We do not buy ratings.`}
+      />
+    </div>
+  </section>
+
+  {/* ── 12 · City FAQ ── */}
+  <section class="section section--tint">
+    <div class="wrap faq-city">
+      <FAQAccordion
+        faqs={d.faqs}
+        heading={`Packers and movers in ${d.name}: common questions`}
+        intro={`Pricing, permissions, and how a move is planned in ${d.name}.`}
+      />
+    </div>
+  </section>
+
+  {/* ── 13 · Final CTA + contact ── */}
+  <CTABand
+    heading={`Planning a move in ${d.name}?`}
+    sub={`Share your locality and date. After a survey we send a written quote for your ${d.name} move.`}
+    city={d.name}
+    quoteHref="#lead-form"
+  />
+
+  {/* ── 14 · Nearby cities (internal-linking mesh) ── */}
+  <section class="section">
+    <div class="wrap nearby-wrap">
+      <h2 class="nearby-h">Also serving near {d.name}</h2>
+      <div class="areas">
+        {
+          nearbyCities.map((c) => (
+            <a class="area" href={`/packers-and-movers-${c.data.slug}/`}>
+              <Icon name="pin" size={12} />Packers and Movers in {c.data.name}
+            </a>
+          ))
+        }
+        <a class="area area--all" href="/cities/"><Icon name="route" size={12} />All cities</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cp-form { padding: clamp(16px, 2.4vw, 24px); border-top: 4px solid var(--color-orange-500); min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box; overflow: visible; }
+  .quote-expl { color: var(--color-slate-500); font-size: 0.94rem; max-width: 66ch; line-height: 1.7; }
+  .quote-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0 22px; }
+  .qstep strong { font-size: 0.92rem; }
+  .qstep p { font-size: 0.84rem; color: var(--color-slate-500); margin-top: 6px; }
+  @media (max-width: 760px) { .quote-steps { grid-template-columns: 1fr; } }
+  .city-hero { padding: 22px 0 30px; background: var(--color-grey-25); }
+  .city-crumbs { margin-bottom: 18px; }
+  .cp-hero {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(20px, 3.5vw, 40px);
+    background: var(--color-blue-50); border: 1px solid var(--color-line-blue);
+    border-radius: var(--radius-m); padding: clamp(20px, 3.2vw, 34px); align-items: start;
+    position: relative; overflow: visible;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+  .cp-hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(30, 58, 138, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(90% 100% at 82% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(90% 100% at 82% 0%, #000 30%, transparent 75%);
+  }
+  .cp-hero > * { position: relative; }
+  .cp-copy h1 { font-size: clamp(1.6rem, 3.4vw, 2.35rem); letter-spacing: -0.03em; margin: 10px 0 12px; }
+  .cp-sub { color: var(--color-slate-500); font-size: 0.94rem; }
+  .cp-cta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+  .cp-cta .btn { min-height: 46px; padding: 11px 18px; font-size: 0.9rem; }
+  .cp-reply { font-size: 0.78rem; color: var(--color-slate-500); flex-basis: 100%; }
+  @media (max-width: 900px) { .cp-hero { grid-template-columns: 1fr; } }
+
+  .section--flat .wrap { padding-top: 6px; padding-bottom: 6px; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .sec-head h2, .flat-h { font-size: clamp(1.4rem, 2.6vw, 1.85rem); letter-spacing: -0.025em; margin-top: 12px; }
+  .sec-link { color: var(--color-blue-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap; }
+
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .svc { display: flex; flex-direction: column; gap: 8px; transition: border-color 180ms; }
+  .svc:hover { border-color: var(--color-blue-600); }
+  .svc-ic { width: 38px; height: 38px; display: grid; place-items: center; border-radius: var(--radius-s); background: var(--color-blue-50); color: var(--color-blue-600); border: 1px solid var(--color-line-blue); }
+  .svc h3 { font-size: 0.97rem; }
+  .svc p { font-size: 0.83rem; color: var(--color-slate-500); }
+  @media (max-width: 860px) { .svc-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .svc-grid { grid-template-columns: 1fr; } }
+
+  .price-links { margin-top: 14px; font-size: 0.88rem; color: var(--color-slate-500); }
+  .price-links a { color: var(--color-blue-600); font-weight: 600; }
+
+  .calc-wrap { display: grid; grid-template-columns: 0.9fr 1.3fr; gap: clamp(20px, 3.5vw, 40px); align-items: center; }
+  .calc-h { font-size: clamp(1.4rem, 2.6vw, 1.85rem); letter-spacing: -0.025em; margin-top: 12px; }
+  .calc-p { color: var(--color-slate-500); font-size: 0.92rem; margin-top: 10px; }
+  .calc-box { padding: clamp(18px, 3vw, 28px); }
+  .calc-cta { justify-self: end; }
+  @media (max-width: 860px) { .calc-wrap { grid-template-columns: 1fr; } .calc-cta { justify-self: stretch; text-align: center; justify-content: center; } }
+
+  .areas { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .area {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--color-line); background: #fff; border-radius: var(--radius-xs);
+    padding: 9px 13px; font-size: 0.82rem; font-weight: 600; color: var(--color-ink-900);
+    transition: border-color 180ms;
+  }
+  .area:hover { border-color: var(--color-blue-600); }
+  .area small { color: var(--color-slate-400); font-weight: 500; }
+  .area svg { color: var(--color-slate-400); }
+  .area--all { border-color: var(--color-line-blue); color: var(--color-navy-800); }
+  .areas-note { color: var(--color-slate-500); font-size: 0.92rem; margin-top: 14px; max-width: 70ch; }
+
+  .route-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+  .route-pill {
+    display: flex; justify-content: space-between; gap: 12px; align-items: center;
+    border: 1px solid var(--color-line); border-radius: var(--radius-s);
+    padding: 15px 17px; background: #fff; font-size: 0.9rem; font-weight: 600; transition: border-color 180ms;
+  }
+  .route-pill:hover { border-color: var(--color-blue-600); }
+  .route-pill small { display: block; font-weight: 500; font-size: 0.74rem; color: var(--color-slate-500); margin-top: 2px; }
+  .route-pill svg { color: var(--color-slate-400); flex: none; }
+  @media (max-width: 760px) { .route-list { grid-template-columns: 1fr; } }
+
+  .rules-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 14px; margin-top: 20px; align-items: start; }
+  .rules-card { padding: 8px 0; }
+  .rules-list { list-style: none; }
+  .rules-list li {
+    display: flex; gap: 12px; padding: 12px 20px; font-size: 0.88rem;
+    border-bottom: 1px dashed var(--color-line); align-items: flex-start;
+  }
+  .rules-list li:last-child { border-bottom: 0; }
+  .rules-list svg { flex: none; color: var(--color-blue-600); margin-top: 3px; }
+  .rules-list strong { font-weight: 600; }
+  .rules-card .rules-list span { color: var(--color-slate-500); }
+  .rules-card .rules-list strong { color: var(--color-ink-900); }
+  .rules-dark { background: linear-gradient(160deg, var(--color-ink-800), var(--color-ink-850)); color: #fff; border-color: transparent; }
+  .rules-dark h3 { font-size: 0.95rem; padding: 16px 20px 8px; }
+  .rules-dark .rules-list li { border-color: rgba(255, 255, 255, 0.08); }
+  .rules-dark .rules-list svg { color: var(--color-blue-500); }
+  .rules-dark .band { color: #bcd3ff; font-variant-numeric: tabular-nums; }
+  .dark-note { font-size: 0.74rem; color: #7e96c8; padding: 12px 20px 16px; }
+  @media (max-width: 860px) { .rules-grid { grid-template-columns: 1fr; } }
+
+  .why-local { margin-top: 14px; }
+  .why-local h3 { font-size: 1.02rem; margin-bottom: 8px; }
+  .why-local p { color: var(--color-slate-500); font-size: 0.92rem; }
+
+  .nearby-wrap { padding-top: 8px; }
+  .nearby-h { font-size: 1.05rem; }
+</style>

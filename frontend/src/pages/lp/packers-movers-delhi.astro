@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import { telHref } from '@/consts';
+---
+<BaseLayout
+  title="Packers and Movers in Delhi — Get a Quote | Shiftify"
+  description="Need packers and movers in Delhi? Share your localities — Shiftify sends a written quote after a short survey. No public prices, no booking advance."
+  canonicalPath="/lp/packers-movers-delhi/"
+  noindex={true}
+  quoteHref="#lead-form"
+>
+  <section class="section">
+    <div class="wrap lp">
+      <span class="kicker">Delhi · Google campaign</span>
+      <h1>Packers and movers in Delhi</h1>
+      <p>Local and intercity moves from Dwarka, Rohini, Saket and across the NCT. Written quote after a free survey.</p>
+      <div class="cta-row"><WhatsAppButton city="Delhi" /><a class="btn btn--ghost" href={telHref() || '/contact/'} data-event="call_click">Call Now</a></div>
+      <div class="card" style="padding:20px;margin-top:22px">
+        <LeadForm client:load context={{ source: 'lp:delhi', fromCity: 'Delhi', fromState: 'Delhi' }} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .lp h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; margin: 10px 0 12px; }
+  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+</style>

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import BlogIndex from '@/components/islands/BlogIndex';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }];
+---
+<BaseLayout
+  title="Moving guides & blog | Shiftify"
+  description="Practical house-shifting guides from Shiftify Packers and Movers."
+  canonicalPath="/blog/"
+  jsonLd={[breadcrumbSchema(crumbs)]}
+>
+  <section class="section blog-page">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">The Shiftify journal</p>
+      <h1>Moving advice, practical guides and insights for a smoother move.</h1>
+      <BlogIndex client:load />
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .blog-page h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 10px 0 28px; letter-spacing: -0.03em; max-width: 28ch; }
+  :global(.blog-feat) {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: center;
+    padding: 0; border: 1px solid var(--color-line); border-radius: 14px; overflow: hidden; background: #fff;
+    margin-bottom: 36px; text-decoration: none; color: inherit;
+  }
+  :global(.blog-feat img) { width: 100%; height: 100%; max-height: 340px; object-fit: cover; display: block; }
+  :global(.blog-feat > div) { padding: 22px 22px 22px 0; }
+  :global(.blog-feat h2) { font-size: clamp(1.25rem, 2.2vw, 1.7rem); letter-spacing: -0.03em; margin: 8px 0; }
+  :global(.blog-feat p) { color: var(--color-slate-500); }
+  :global(.blog-latest) { font-size: 1.15rem; margin: 8px 0 16px; }
+  :global(.blog-grid) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  :global(.blog-card) {
+    display: flex; flex-direction: column; border: 1px solid var(--color-line); border-radius: 14px;
+    background: #fff; overflow: hidden; text-decoration: none; color: inherit;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04); transition: box-shadow 180ms ease, border-color 180ms ease;
+  }
+  :global(.blog-card:hover) { border-color: var(--color-line-blue); box-shadow: 0 12px 28px -20px rgba(30,58,138,0.35); }
+  :global(.blog-card img) { width: 100%; height: 160px; object-fit: cover; display: block; }
+  :global(.blog-card-body) { padding: 14px 16px 16px; }
+  :global(.blog-card h3) { font-size: 1.05rem; letter-spacing: -0.02em; }
+  :global(.blog-card p) { color: var(--color-slate-500); font-size: 0.9rem; margin-top: 6px; }
+  :global(.blog-date), :global(.blog-cat) { font-size: 0.78rem; color: var(--color-slate-500); }
+  :global(.blog-more) { display: inline-block; margin-top: 10px; color: var(--color-blue-600); font-weight: 700; font-size: 0.88rem; }
+  :global(.blog-search) { display: flex; gap: 8px; margin-bottom: 22px; max-width: 420px; }
+  :global(.blog-search input) { flex: 1; min-height: 42px; border: 1px solid var(--color-line); border-radius: 10px; padding: 8px 12px; }
+  :global(.blog-empty) { padding: 28px 0; color: var(--color-slate-500); }
+  :global(.blog-skels) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  :global(.blog-skel) { height: 180px; background: #e8eef7; border-radius: 12px; }
+  @media (max-width: 900px) {
+    :global(.blog-feat) { grid-template-columns: 1fr; }
+    :global(.blog-feat > div) { padding: 16px; }
+    :global(.blog-grid), :global(.blog-skels) { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    :global(.blog-grid), :global(.blog-skels) { grid-template-columns: 1fr; }
+  }
+</style>

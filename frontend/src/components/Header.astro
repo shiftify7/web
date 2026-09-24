@@ -1,0 +1,355 @@
+---
+import { Image } from 'astro:assets';
+import logo from '@/assets/logo-word.png';
+import { allServices, allCities } from '@/lib/data';
+import Icon from './Icon.astro';
+import MobileNav from './islands/MobileNav';
+import { SITE, telHref } from '@/consts';
+import { INDIA_STATES, INDIA_UNION_TERRITORIES } from '@/lib/locations';
+
+const [services, cities] = await Promise.all([allServices(), allCities()]);
+
+type HeaderLink = { label: string; href: string };
+
+const navServiceLinks: HeaderLink[] = services.map((s) => ({
+  label: s.data.name,
+  href: `/services/${s.data.slug}/`,
+}));
+const navCityLinks: HeaderLink[] = cities.map((c) => ({
+  label: c.data.name,
+  href: `/packers-and-movers-${c.data.slug}/`,
+}));
+const navLocationSections = [
+  { label: 'Cities & NCR', links: navCityLinks },
+  { label: 'States', links: INDIA_STATES.map((region) => ({ label: region.name, href: `/packers-and-movers-in-${region.slug}/` })) },
+];
+---
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="brand" aria-label="Shiftify — home">
+      <Image src={logo} alt="Shiftify Packers and Movers" width={140} height={39} loading="eager" decoding="async" />
+    </a>
+
+    <nav class="nav-desk" aria-label="Primary">
+      <a href="/" class="nav-link">Home</a>
+      <div class="nav-item" data-nav-menu>
+        <button type="button" class="nav-link nav-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="nav-services-menu">
+          Services
+        </button>
+        <div id="nav-services-menu" class="nav-drop nav-drop--grid" role="menu" aria-label="Services" hidden>
+          <a href="/services/" role="menuitem" class="drop-all">All services →</a>
+          {navServiceLinks.map((l) => <a href={l.href} role="menuitem">{l.label}</a>)}
+        </div>
+      </div>
+      <div class="nav-item" data-nav-menu>
+        <button type="button" class="nav-link nav-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="nav-locations-menu">
+          Locations
+        </button>
+        <div id="nav-locations-menu" class="nav-drop nav-drop--locations" role="menu" aria-label="Locations" hidden>
+          {navLocationSections.map((section) => (
+            <div class="nav-drop-section" role="group" aria-label={section.label}>
+              <strong role="presentation">{section.label}</strong>
+              {section.links.map((l) => <a href={l.href} role="menuitem">{l.label}</a>)}
+              {section.label === 'Cities & NCR' && <a href="/cities/" role="menuitem" class="drop-all">All city guides →</a>}
+            </div>
+          ))}
+          <div class="nav-drop-section nav-drop-section--ut" role="group" aria-label="Union Territories">
+            <strong role="presentation">Union Territories</strong>
+            {INDIA_UNION_TERRITORIES.map((region) => <span role="presentation">{region.name}</span>)}
+          </div>
+        </div>
+      </div>
+      <a href="/about/" class="nav-link">About</a>
+      <a href="/blog/" class="nav-link">Blog</a>
+      <a href="/faq/" class="nav-link">FAQ</a>
+      <a href="/contact/" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="header-cta">
+      <a href={telHref() || '#hero'} class="btn btn--ghost header-phone" data-event="call_click" data-event-position="header">
+        <Icon name="phone" size={17} />
+        <span>{SITE.phoneDisplay}</span>
+      </a>
+      <a href="/#hero" class="btn header-quote" data-event="quote_cta_click" data-event-position="header">
+        Get Instant Quote <Icon name="arrow" size={17} />
+      </a>
+    </div>
+
+    <div class="header-mobile">
+      <MobileNav client:load services={navServiceLinks} locations={{ sections: navLocationSections, territories: INDIA_UNION_TERRITORIES.map((region) => region.name) }} />
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const roots = Array.from(document.querySelectorAll('[data-nav-menu]'));
+    if (!roots.length) return;
+
+    const closeMenu = (root) => {
+      const trigger = root.querySelector('.nav-trigger');
+      const menu = root.querySelector('.nav-drop');
+      root.classList.remove('is-open');
+      trigger?.setAttribute('aria-expanded', 'false');
+      if (menu) menu.hidden = true;
+    };
+
+    const openMenu = (root) => {
+      roots.forEach((other) => { if (other !== root) closeMenu(other); });
+      const trigger = root.querySelector('.nav-trigger');
+      const menu = root.querySelector('.nav-drop');
+      root.classList.add('is-open');
+      trigger?.setAttribute('aria-expanded', 'true');
+      if (menu) menu.hidden = false;
+    };
+
+    roots.forEach((root) => {
+      const trigger = root.querySelector('.nav-trigger');
+      if (!trigger) return;
+      trigger.addEventListener('click', () => {
+        root.classList.contains('is-open') ? closeMenu(root) : openMenu(root);
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Node) || !roots.some((root) => root.contains(target))) {
+        roots.forEach(closeMenu);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const open = roots.find((root) => root.classList.contains('is-open'));
+      if (!open) return;
+      closeMenu(open);
+      open.querySelector('.nav-trigger')?.focus();
+    });
+  })();
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Three deliberate zones: left brand, intrinsic centred navigation, right actions. */
+  .site-header__inner {
+    width: min(1440px, calc(100% - 48px));
+    min-height: 72px;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(16px, 2.2vw, 32px);
+  }
+
+  .brand {
+    grid-column: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    min-width: 0;
+  }
+
+  .brand img {
+    display: block;
+    width: 130px;
+    height: auto;
+    transition: opacity 160ms ease;
+  }
+
+  .brand:hover img { opacity: 0.88; }
+
+  .nav-desk {
+    grid-column: 2;
+    justify-self: center;
+    min-width: 0;
+    width: max-content;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: clamp(2px, 0.4vw, 8px);
+    white-space: nowrap;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 9px clamp(7px, 0.7vw, 12px);
+    color: var(--color-ink-900);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible,
+  .nav-item.is-open > .nav-link {
+    color: var(--color-blue-600);
+    background: var(--color-blue-50);
+  }
+
+  .nav-trigger::after {
+    content: "";
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 5px;
+    height: 5px;
+    margin-inline-start: 8px;
+    border: solid var(--color-slate-400);
+    border-width: 0 1.5px 1.5px 0;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 160ms ease;
+  }
+
+  .nav-item.is-open > .nav-trigger::after {
+    transform: translateY(1px) rotate(225deg);
+  }
+
+  .nav-item { position: relative; flex: 0 0 auto; }
+
+  .nav-drop {
+    position: absolute;
+    inset-block-start: calc(100% + 8px);
+    inset-inline-start: 0;
+    z-index: 60;
+    display: none;
+    min-width: 280px;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-m);
+    box-shadow: 0 24px 48px -16px rgba(7, 13, 31, 0.25);
+  }
+
+  .nav-item.is-open > .nav-drop { display: block; }
+  .nav-drop[hidden] { display: none !important; }
+
+  .nav-drop a {
+    display: block;
+    padding: 9px 12px;
+    color: var(--color-ink-900);
+    border-radius: var(--radius-xs);
+    font-size: 0.86rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .nav-drop a:hover,
+  .nav-drop a:focus-visible {
+    color: var(--color-blue-600);
+    background: var(--color-blue-50);
+  }
+
+  .nav-drop--grid {
+    min-width: 420px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 4px;
+  }
+
+  .nav-item.is-open > .nav-drop--grid { display: grid; }
+  .nav-drop--locations {
+    min-width: min(560px, 72vw);
+    max-height: min(70vh, 560px);
+    padding: 12px;
+    overflow-y: auto;
+  }
+
+  .nav-drop-section {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 4px;
+    align-content: start;
+  }
+
+  .nav-drop-section + .nav-drop-section {
+    margin-block-start: 10px;
+    padding-block-start: 10px;
+    border-block-start: 1px solid var(--color-line);
+  }
+
+  .nav-drop-section strong {
+    grid-column: 1 / -1;
+    padding: 4px 12px 6px;
+    color: var(--color-slate-500);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-drop-section--ut { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-drop-section--ut span {
+    display: block;
+    padding: 9px 12px;
+    color: var(--color-slate-500);
+    font-size: 0.8rem;
+  }
+
+  .drop-all {
+    margin-block-start: 4px;
+    color: var(--color-blue-600) !important;
+    border-block-start: 1px solid var(--color-line);
+  }
+
+  .header-cta {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    gap: 8px;
+    min-width: max-content;
+  }
+
+  .header-cta .btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+  }
+
+  .header-phone,
+  .header-quote { white-space: nowrap; }
+  .header-phone { display: inline-flex; align-items: center; gap: 7px; }
+
+  .header-mobile {
+    grid-column: 3;
+    display: none;
+    justify-self: end;
+  }
+
+  @media (max-width: 1279px) {
+    .site-header__inner {
+      width: min(1440px, calc(100% - 32px));
+      min-height: 68px;
+    }
+    .nav-desk,
+    .header-cta { display: none; }
+    .header-mobile { display: block; }
+  }
+
+  @media (max-width: 480px) {
+    .site-header__inner {
+      width: calc(100% - 32px);
+      min-height: 64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-trigger::after,
+    .brand img { transition: none; }
+  }
+</style>

@@ -1,0 +1,203 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import Icon from '@/components/Icon.astro';
+import { allCities, allServices } from '@/lib/data';
+import {
+  INDIA_STATES,
+  capitalForRegion,
+  type IndiaRegion,
+} from '@/lib/locations';
+import { STATE_LANDING_COPY } from '@/lib/stateLanding';
+import { breadcrumbSchema, faqSchema, stateLandingSchema } from '@/lib/schema';
+import { getCollection } from 'astro:content';
+
+export const getStaticPaths = (async () => INDIA_STATES.map((region) => ({
+  params: { state: region.slug },
+  props: { region },
+}))) satisfies GetStaticPaths;
+
+const { region } = Astro.props as { region: IndiaRegion };
+const capital = capitalForRegion(region);
+if (!capital) throw new Error(`Missing capital record for ${region.name}`);
+const copy = STATE_LANDING_COPY[region.slug];
+if (!copy) throw new Error(`Missing state landing copy for ${region.slug}`);
+const [cities, services, faqEntries] = await Promise.all([
+  allCities(),
+  allServices(),
+  getCollection('faqs'),
+]);
+const existingCities = cities.filter((city) => city.data.state === region.name);
+const faqs = [
+  {
+    q: `How do I plan a move involving ${region.name}?`,
+    a: `Share the pickup and drop city, inventory, access details and preferred date. A route-specific survey is the right next step before a written quote is prepared.`,
+  },
+  {
+    q: `What is the capital of ${region.name}?`,
+    a: `${capital.name} is the capital listed for ${region.name} in Shiftify's location directory. The capital image is a local reference, not a claim of a branch or office.`,
+  },
+  ...faqEntries.slice(0, 3).map((entry) => entry.data),
+];
+const path = `/packers-and-movers-in-${region.slug}/`;
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Locations', path: '/cities/' },
+  { name: `Packers and Movers in ${region.name}`, path },
+];
+const jsonLd = [
+  ...stateLandingSchema(region, capital.name),
+  faqSchema(faqs),
+  breadcrumbSchema(crumbs),
+];
+---
+<BaseLayout
+  title={`Packers and Movers in ${region.name} | Shiftify`}
+  description={`Plan a move involving ${region.name} with route-led guidance, ${capital.name} capital context, services and a written quote from Shiftify.`}
+  canonicalPath={path}
+  jsonLd={jsonLd}
+  stickyCity={capital.name}
+  quoteHref="/#hero"
+>
+  <section class="state-hero">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <div class="state-hero-grid">
+        <div>
+          <span class="kicker">Locations · {region.name}</span>
+          <h1>Packers and Movers in {region.name}</h1>
+          <p class="state-intro">{copy.intro}</p>
+          <div class="state-actions">
+            <a class="btn btn--blue" href="/#hero" data-event="quote_cta_click" data-event-position="state-hero">Get a Free Quote</a>
+            <WhatsAppButton label="WhatsApp the route" />
+          </div>
+        </div>
+        <figure class="capital-card card">
+          {capital.image ? <img src={capital.image.src} width={capital.image.width} height={capital.image.height} alt={capital.imageAlt || `${capital.name} capital reference`} loading="eager" /> : <div class="capital-placeholder" aria-hidden="true" />}
+          <figcaption><strong>{capital.name}</strong><span>Capital of {region.name}</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap state-copy-grid">
+      <article>
+        <span class="kicker">Plan the route first</span>
+        <h2>Moving involving {region.name}, scoped around the actual access</h2>
+        <p>{copy.planning}</p>
+        <p>{copy.localNote}</p>
+        <p class="state-safe-note">Shiftify does not publish a generic state rate. The quote depends on inventory, packing, floors, access, route and date.</p>
+      </article>
+      <aside class="state-facts card">
+        <span class="state-facts-label">Directory record</span>
+        <dl>
+          <div><dt>State</dt><dd>{region.name}</dd></div>
+          <div><dt>Capital</dt><dd>{capital.name}</dd></div>
+          <div><dt>State code</dt><dd>{region.stateCode}</dd></div>
+          <div><dt>Country</dt><dd>India</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  {existingCities.length > 0 && (
+    <section class="section section--tint">
+      <div class="wrap">
+        <span class="kicker">Existing city guides</span>
+        <h2>City pages in {region.name}</h2>
+        <p class="section-lede">Use these existing city pages for local context; this state page remains the route and service overview.</p>
+        <div class="link-grid">
+          {existingCities.map((city) => (
+            <a class="link-card card" href={`/packers-and-movers-${city.data.slug}/`}>
+              <span><strong>Packers and Movers in {city.data.name}</strong><small>{city.data.state}</small></span>
+              <Icon name="chev" size={16} />
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">Services</span>
+      <h2>Moving services to discuss for a {region.name} route</h2>
+      <div class="service-grid">
+        {services.map((service) => (
+          <a class="service-card card" href={`/services/${service.data.slug}/`}>
+            <span class="service-icon"><Icon name={service.data.icon} size={19} /></span>
+            <strong>{service.data.name}</strong>
+            <p>{service.data.short}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="wrap">
+      <span class="kicker">Questions before a quote</span>
+      <h2>FAQs about moving involving {region.name}</h2>
+      <div class="faq-list">
+        {faqs.slice(0, 5).map((faq) => (
+          <details class="faq-item card">
+            <summary>{faq.q}<span aria-hidden="true">+</span></summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    heading={`Planning a move involving ${region.name}?`}
+    sub="Share the route and date. After the scope is clear, the quote is written for the move rather than copied from a generic table."
+    quoteHref="/#hero"
+  />
+</BaseLayout>
+
+<style>
+  .state-hero { padding: 22px 0 34px; background: var(--color-grey-25); }
+  .state-hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr); align-items: center; gap: clamp(24px, 5vw, 70px); margin-top: 18px; }
+  h1 { max-width: 720px; font-size: clamp(2rem, 4.8vw, 3.4rem); line-height: 1.05; letter-spacing: -.04em; margin: 12px 0 16px; }
+  .state-intro { max-width: 62ch; color: var(--color-slate-500); line-height: 1.65; font-size: 1rem; }
+  .state-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+  .capital-card { overflow: hidden; padding: 0; border-top: 4px solid var(--color-orange-500); }
+  .capital-card img, .capital-placeholder { display: block; width: 100%; height: 210px; object-fit: cover; background: var(--color-blue-50); }
+  .capital-card figcaption { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px 16px; }
+  .capital-card figcaption strong { font-size: 1rem; }
+  .capital-card figcaption span { color: var(--color-slate-500); font-size: .82rem; }
+  .state-copy-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); gap: clamp(24px, 5vw, 70px); align-items: start; }
+  .state-copy-grid h2, .wrap > h2 { max-width: 750px; font-size: clamp(1.45rem, 3vw, 2.1rem); letter-spacing: -.03em; margin: 10px 0 14px; }
+  .state-copy-grid article p { max-width: 68ch; color: var(--color-slate-500); line-height: 1.7; margin-top: 12px; }
+  .state-safe-note { color: var(--color-navy-800) !important; font-weight: 600; }
+  .state-facts { padding: 20px; }
+  .state-facts-label { color: var(--color-slate-500); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+  .state-facts dl { display: grid; gap: 12px; margin-top: 16px; }
+  .state-facts dl div { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px dashed var(--color-line); padding-bottom: 9px; font-size: .86rem; }
+  .state-facts dt { color: var(--color-slate-500); }
+  .state-facts dd { margin: 0; font-weight: 700; text-align: right; }
+  .section-lede { color: var(--color-slate-500); max-width: 64ch; }
+  .link-grid, .service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+  .link-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; }
+  .link-card span { display: flex; flex-direction: column; gap: 3px; }
+  .link-card small { color: var(--color-slate-500); }
+  .link-card svg { color: var(--color-slate-400); }
+  .service-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .service-card { display: flex; flex-direction: column; gap: 9px; padding: 17px; }
+  .service-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-s); color: var(--color-blue-600); background: var(--color-blue-50); }
+  .service-card p { color: var(--color-slate-500); font-size: .84rem; line-height: 1.5; }
+  .faq-list { display: grid; gap: 10px; max-width: 820px; margin-top: 20px; }
+  .faq-item { padding: 0 17px; }
+  .faq-item summary { display: flex; justify-content: space-between; gap: 14px; cursor: pointer; list-style: none; padding: 17px 0; font-weight: 700; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary span { color: var(--color-blue-600); font-size: 1.15rem; }
+  .faq-item[open] summary span { transform: rotate(45deg); }
+  .faq-item p { color: var(--color-slate-500); line-height: 1.6; padding: 0 0 17px; font-size: .9rem; }
+  @media (max-width: 800px) { .state-hero-grid, .state-copy-grid { grid-template-columns: 1fr; } .capital-card { max-width: 460px; } }
+  @media (max-width: 600px) { .link-grid, .service-grid { grid-template-columns: 1fr; } .capital-card img, .capital-placeholder { height: 180px; } }
+</style>

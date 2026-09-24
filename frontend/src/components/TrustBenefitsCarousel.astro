@@ -1,0 +1,144 @@
+---
+import Icon from './Icon.astro';
+
+const benefits = [
+  { label: 'Dedicated Move Manager', icon: 'user' as const },
+  { label: 'GST Invoice With No Hidden Cost', icon: 'receipt' as const },
+  { label: '10+ Years of Experience', icon: 'star' as const },
+  { label: 'Premium Packaging', icon: 'box' as const },
+  { label: 'No Outsourcing', icon: 'check' as const },
+  { label: 'Fast & Timely Delivery', icon: 'truck' as const },
+  { label: 'Best Price Guarantee', icon: 'file' as const },
+  { label: 'Trained & Verified Staff', icon: 'shield-check' as const },
+  { label: '24x7 Customer Support', icon: 'phone' as const },
+  { label: '100% Customer Satisfaction', icon: 'star' as const },
+];
+---
+<section class="trust-strip" aria-label="Shiftify moving benefits">
+  <div class="trust-strip__viewport">
+    <ul class="trust-strip__track">
+      {benefits.map((b) => (
+        <li class="trust-strip__item">
+          <span class="trust-strip__ico" aria-hidden="true">
+            <Icon name={b.icon} size={22} />
+          </span>
+          <span class="trust-strip__label">{b.label}</span>
+        </li>
+      ))}
+      {benefits.map((b) => (
+        <li class="trust-strip__item" aria-hidden="true">
+          <span class="trust-strip__ico">
+            <Icon name={b.icon} size={22} />
+          </span>
+          <span class="trust-strip__label">{b.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trust-strip {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .trust-strip__viewport {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 82px;
+    background: #0f172a;
+    border-radius: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .trust-strip__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: trust-marquee 60s linear infinite;
+  }
+  .trust-strip:hover .trust-strip__track,
+  .trust-strip:focus-within .trust-strip__track {
+    animation-play-state: paused;
+  }
+  .trust-strip__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 clamp(122px, 9vw, 150px);
+    box-sizing: border-box;
+    height: 100%;
+    padding: 0 10px;
+    white-space: normal;
+    color: #fff;
+    font-size: clamp(0.68rem, 0.75vw, 0.8rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    position: relative;
+  }
+  .trust-strip__item + .trust-strip__item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 32%;
+    bottom: 32%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .trust-strip__ico {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    color: #2563eb;
+  }
+  .trust-strip__ico :global(svg) {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .trust-strip__label {
+    min-width: 0;
+    line-height: 1.25;
+    text-align: left;
+  }
+  @keyframes trust-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media (max-width: 767.5px) {
+    .trust-strip__viewport { height: 88px; }
+    .trust-strip__item {
+      flex-basis: 174px;
+      padding: 0 20px;
+      font-size: 0.82rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trust-strip__track {
+      animation: none;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+      height: auto;
+      padding: 8px 8px;
+    }
+    .trust-strip__viewport { height: auto; }
+    .trust-strip__item { height: auto; padding: 10px 16px; }
+    .trust-strip__item[aria-hidden="true"] { display: none; }
+  }
+</style>

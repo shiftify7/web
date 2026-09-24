@@ -1,0 +1,2 @@
+# Serve CMS blog slugs through the blog island (static host has no SSR).
+/blog/:slug/  /blog/index.html  200

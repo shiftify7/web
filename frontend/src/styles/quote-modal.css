@@ -1,0 +1,60 @@
+/* Loaded by HeroQuoteBar island so modal styles apply even when portaled to document.body */
+.hqm {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  align-items: start;
+  padding: 16px;
+  padding-top: 4rem;
+}
+.hqm-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 13, 31, 0.5);
+}
+.hqm-card {
+  position: relative;
+  z-index: 1;
+  width: min(640px, calc(100% - 32px));
+  max-width: 640px;
+  margin-top: -3rem;
+  border-top: 4px solid var(--color-orange-500, #ef7d1a);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+  border: 1px solid var(--color-line, #e2e8f0);
+  border-radius: 12px;
+  padding: 22px 22px 20px;
+}
+.hqm-card h2 { font-size: 1.2rem; margin: 0 0 14px; letter-spacing: -0.02em; }
+.hqm-x {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+  display: grid; place-items: center; border: 1px solid var(--color-line, #e2e8f0); border-radius: 50%;
+  background: #fff; cursor: pointer; padding: 0;
+}
+.hqm-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; min-width: 0; }
+.hqm-lab, .hqm-field label { font-size: 0.78rem; font-weight: 700; color: var(--color-ink-900, #0f172a); }
+.hqm-val { margin: 0; font-size: 0.95rem; font-weight: 600; }
+.hqm-field input {
+  width: 100%; max-width: 100%; min-width: 0; min-height: 52px; padding: 12px 14px;
+  border: 1.5px solid var(--color-line, #e2e8f0); border-radius: 8px; font: inherit; font-weight: 600;
+  box-sizing: border-box; background: var(--color-grey-25, #fbfcfe);
+}
+.hqm-flex { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 600; margin-bottom: 12px; }
+.hqm-type { margin: 0 0 12px; font-size: 0.9rem; font-weight: 700; }
+.hqm-type span { display: block; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-slate-500, #64748b); }
+.hqm-err { color: #b91c1c; font-size: 0.82rem; font-weight: 600; margin: 0 0 10px; }
+.hqm-btn {
+  width: 100%; min-height: 48px; border: 0; border-radius: 8px; cursor: pointer;
+  background: var(--color-blue-600, #2563eb); color: #fff; font: inherit; font-weight: 700;
+}
+.hqm-btn:hover { background: var(--color-navy-800, #1e3a8a); }
+.hqm-btn:disabled { opacity: 0.7; cursor: wait; }
+.hqm-done { display: grid; gap: 10px; }
+.hqm-loc { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hqm-loc .hqb-thumb { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+.hqm .hqb-cell { border: 1px solid var(--color-line, #e2e8f0); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+.hqm .hqb-dot { display: none; }

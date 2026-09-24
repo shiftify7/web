@@ -1,0 +1,89 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CTABand from '@/components/CTABand.astro';
+import Icon from '@/components/Icon.astro';
+import { allCities } from '@/lib/data';
+import { INDIA_STATES, INDIA_UNION_TERRITORIES } from '@/lib/locations';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const cities = await allCities();
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Cities', path: '/cities/' }];
+const COMING = ['Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow', 'Indore', 'Kochi', 'Chandigarh'];
+---
+<BaseLayout
+  title="Cities We Serve — Packers and Movers Across India | Shiftify"
+  description="Shiftify serves Delhi, Gurgaon, Noida, Mumbai and Bengaluru today, with intercity corridors between them — and more cities launching as operations verify."
+  canonicalPath="/cities/"
+  jsonLd={[breadcrumbSchema(crumbs)]}
+  quoteHref="/#hero"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <h1>Cities we serve</h1>
+      <p class="lead">
+        We open a city page only when we genuinely serve it — real crews or verified partners and real local rules.
+        That's why this list is short and proud of it. Intercity corridors connect every city below.
+      </p>
+      <div class="city-grid">
+        {cities.map((c) => (
+          <a class="city-card card" href={`/packers-and-movers-${c.data.slug}/`}>
+            <div class="cc-top">
+              <Icon name="pin" size={20} class="cc-pin" />
+              <span class="cc-tier">Tier {c.data.tier}</span>
+            </div>
+            <h2>Packers and Movers in {c.data.name}</h2>
+            <p class="cc-state">{c.data.state}{c.data.aliases.length ? ` · also ${c.data.aliases.join(', ')}` : ''}</p>
+            <p class="cc-price">Home · office · vehicle moves</p>
+            {c.data.localities.length > 0 && <p class="cc-loc">{c.data.localities.length} locality guides inside →</p>}
+          </a>
+        ))}
+      </div>
+      <section class="state-directory" aria-labelledby="state-directory-title">
+        <span class="kicker">National location guide</span>
+        <h2 id="state-directory-title">State moving guides</h2>
+        <p>These additive guides keep the state and capital relationship clear without replacing the existing city pages.</p>
+        <div class="state-links">
+          {INDIA_STATES.map((region) => <a href={`/packers-and-movers-in-${region.slug}/`}>{region.name}<small>{region.capital}</small></a>)}
+        </div>
+        <p class="ut-line"><strong>Union Territories:</strong> {INDIA_UNION_TERRITORIES.map((region) => region.name).join(' · ')}</p>
+      </section>
+      <div class="coming card">
+        <h2>Launching next — directory entries only until we actually serve them</h2>
+        <p class="coming-list">{COMING.join(' · ')}</p>
+        <p class="coming-note">Don't see your city? <a href="/contact/">Ask on WhatsApp</a> — our vetted partner network covers more ground than this page claims.</p>
+      </div>
+    </div>
+  </section>
+  <CTABand heading="Intercity move between these cities?" sub="Our corridor pages cover distance, transit time and how quoting works on each route." quoteHref="/#hero" />
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -0.03em; margin: 14px 0 12px; }
+  .lead { color: var(--color-slate-500); font-size: 0.95rem; max-width: 76ch; }
+  .city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+  .city-card { transition: border-color 180ms, box-shadow 180ms; }
+  .city-card:hover { border-color: var(--color-line-blue); box-shadow: 0 18px 36px -22px rgba(30,58,138,.28); }
+  .cc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .cc-pin { color: var(--color-blue-600); }
+  .cc-tier { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-slate-400); }
+  .city-card h2 { font-size: 1.05rem; }
+  .cc-state { font-size: 0.8rem; color: var(--color-slate-500); margin-top: 4px; }
+  .cc-price { font-size: 0.84rem; font-weight: 700; color: var(--color-navy-800); margin-top: 12px; font-variant-numeric: tabular-nums; }
+  .cc-loc { font-size: 0.78rem; color: var(--color-blue-600); font-weight: 600; margin-top: 6px; }
+  @media (max-width: 900px) { .city-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .city-grid { grid-template-columns: 1fr; } .state-links { grid-template-columns: 1fr 1fr; } }
+  .state-directory { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--color-line); }
+  .state-directory > h2 { font-size: 1.3rem; margin: 8px 0 6px; }
+  .state-directory > p { color: var(--color-slate-500); font-size: .88rem; }
+  .state-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+  .state-links a { display: flex; flex-direction: column; gap: 2px; padding: 10px 11px; border: 1px solid var(--color-line); border-radius: var(--radius-xs); color: var(--color-ink-900); font-size: .8rem; font-weight: 700; background: #fff; }
+  .state-links a:hover { border-color: var(--color-blue-600); color: var(--color-blue-600); }
+  .state-links small { color: var(--color-slate-500); font-size: .7rem; font-weight: 500; }
+  .ut-line { margin-top: 14px; }
+  .coming { margin-top: 30px; background: var(--color-grey-25); }
+  .coming h2 { font-size: 0.95rem; margin-bottom: 8px; }
+  .coming-list { color: var(--color-slate-500); font-size: 0.88rem; }
+  .coming-note { font-size: 0.84rem; color: var(--color-slate-500); margin-top: 10px; }
+  .coming-note a { color: var(--color-blue-600); font-weight: 600; }
+</style>

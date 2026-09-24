@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import Icon from '@/components/Icon.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import BizText from '@/components/islands/BizText';
+import { SITE, telHref, waLink, waMessageFor } from '@/consts';
+import { allCities } from '@/lib/data';
+import { movingCompanySchema, breadcrumbSchema } from '@/lib/schema';
+
+const cities = await allCities();
+const crumbs = [{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }];
+const mc = movingCompanySchema();
+const wa = waLink(waMessageFor());
+const tel = telHref();
+---
+<BaseLayout
+  title="Contact Shiftify Packers and Movers"
+  description="Talk to a human at Shiftify — WhatsApp, call or the quote form. Support hours, registered address and GST details listed openly."
+  canonicalPath="/contact/"
+  jsonLd={[...(mc ? [mc] : []), breadcrumbSchema(crumbs)]}
+  quoteHref="#lead-section"
+>
+  <section class="section">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} />
+      <h1>Talk to a human.</h1>
+      <p class="lead">Three channels, one promise: a real reply during support hours{SITE.supportHours ? ` (${SITE.supportHours})` : ''}.</p>
+      <div class="cc-grid">
+        <div class="cc card">
+          <span class="cc-ic cc-ic--wa"><Icon name="wa" size={20} /></span>
+          <h2>WhatsApp — fastest</h2>
+          <p>Send your from/to locations and moving date; a moving expert replies in minutes.{SITE.whatsappIntl ? ` +${SITE.whatsappIntl}` : ''}</p>
+          <a class="btn" href={wa || '#quote'} data-event="whatsapp_click" {...wa ? { target: '_blank', rel: 'noopener' } : {}}><Icon name="wa" size={18} />Chat now</a>
+        </div>
+        <div class="cc card">
+          <span class="cc-ic cc-ic--call"><Icon name="phone" size={20} /></span>
+          <h2>Call</h2>
+          <p>{SITE.phoneDisplay}{SITE.supportHours ? ` · ${SITE.supportHours}` : ''}</p>
+          <a class="btn btn--ghost" href={tel || '#quote'} data-event="call_click"><Icon name="phone" size={18} />Call now</a>
+        </div>
+        <div class="cc card">
+          <span class="cc-ic cc-ic--mail"><Icon name="mail" size={20} /></span>
+          <h2>Email</h2>
+          <p>{SITE.email} · For quotes, invoices &amp; claims.</p>
+          {SITE.email
+            ? <a class="btn btn--ghost" href={`mailto:${SITE.email}`}><Icon name="mail" size={18} />Write to us</a>
+            : <a class="btn btn--ghost" href="#quote">Use the form below</a>}
+        </div>
+      </div>
+
+      <div class="contact-split" id="lead-section">
+        <div class="card card--pad-s">
+          <h2 class="flat-h" style="margin-top:0">Request a callback — get your quote</h2>
+          <LeadForm client:load horizontal={false} context={{ source: 'contact' }} />
+        </div>
+        <div class="reg card">
+          <h2>Registered business</h2>
+          <p><BizText client:load field="hqAddress" prefix="HQ: " /></p>
+          <p><BizText client:load field="gstin" prefix="GSTIN: " /> <BizText client:load field="legalEntity" prefix="Legal name: " /></p>
+          <h2 class="reg-h2">Cities we serve</h2>
+          <p class="reg-cities">{cities.map((c) => <a href={`/packers-and-movers-${c.data.slug}/`}>{c.data.name}</a>)}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  h1 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); letter-spacing: -0.03em; margin: 14px 0 10px; }
+  .lead { color: var(--color-slate-500); font-size: 0.98rem; }
+  .cc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+  .cc { display: flex; flex-direction: column; gap: 10px; }
+  .cc h2 { font-size: 1.05rem; }
+  .cc p { font-size: 0.86rem; color: var(--color-slate-500); flex: 1; }
+  .cc-ic { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-s); color: #fff; }
+  .cc-ic--wa { background: var(--color-wa-green); }
+  .cc-ic--call { background: var(--color-navy-800); }
+  .cc-ic--mail { background: var(--color-blue-600); }
+  @media (max-width: 860px) { .cc-grid { grid-template-columns: 1fr; } }
+  .contact-split { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(24px, 4vw, 48px); margin-top: 44px; align-items: start; }
+  .flat-h { font-size: clamp(1.3rem, 2.4vw, 1.7rem); letter-spacing: -0.025em; margin-bottom: 18px; }
+  .reg { background: var(--color-blue-50); border-color: var(--color-line-blue); display: grid; gap: 10px; }
+  .reg h2 { font-size: 0.92rem; }
+  .reg p { font-size: 0.86rem; color: var(--color-slate-500); }
+  .note-sm { font-size: 0.76rem !important; }
+  .reg-h2 { margin-top: 14px; }
+  .reg-cities { display: flex; flex-wrap: wrap; gap: 10px 16px; }
+  .reg-cities a { color: var(--color-blue-600); font-weight: 600; font-size: 0.86rem; }
+  @media (max-width: 860px) { .contact-split { grid-template-columns: 1fr; } }
+</style>

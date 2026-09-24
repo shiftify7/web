@@ -1,0 +1,244 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import FAQAccordion from '@/components/FAQAccordion.astro';
+import CTABand from '@/components/CTABand.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
+import PhoneNumber from '@/components/PhoneNumber.astro';
+import Icon from '@/components/Icon.astro';
+import LeadForm from '@/components/islands/LeadForm';
+import { allRoutes, getCity, routesTouching, type Route } from '@/lib/data';
+import { routeServiceSchema, faqSchema, breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (async () => {
+  const routes = await allRoutes();
+  return routes.map((route) => ({
+    params: { from: route.data.from, to: route.data.to },
+    props: { route },
+  }));
+}) satisfies GetStaticPaths;
+
+const { route } = Astro.props as { route: Route };
+const d = route.data;
+
+const [fromCity, toCity, related] = await Promise.all([
+  getCity(d.from),
+  getCity(d.to),
+  routesTouching(d.from),
+]);
+const fromName = fromCity?.data.name ?? d.from;
+const toName = toCity?.data.name ?? d.to;
+const relatedRoutes = related.filter((r) => !(r.data.from === d.from && r.data.to === d.to)).slice(0, 4);
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Routes', path: '/cities/' },
+  { name: `${fromName} to ${toName}`, path: `/packers-and-movers-${d.from}-to-${d.to}/` },
+];
+const jsonLd = [routeServiceSchema(route, fromName, toName), faqSchema(d.faqs), breadcrumbSchema(crumbs)];
+
+const MODE_LABELS: Record<string, string> = {
+  'dedicated-truck': 'Dedicated truck',
+  'shared-load': 'Shared load (part consignment)',
+  container: 'Container',
+  'car-carrier': 'Car carrier',
+};
+---
+<BaseLayout
+  title={d.metaTitle}
+  description={d.metaDescription}
+  canonicalPath={`/packers-and-movers-${d.from}-to-${d.to}/`}
+  jsonLd={jsonLd}
+  stickyCity={`${fromName} to ${toName}`}
+  quoteHref="#lead-form"
+>
+  {/* ── Dark corridor hero with structured stats ── */}
+  <section class="rp-hero-wrap">
+    <div class="wrap">
+      <Breadcrumbs items={crumbs} class="rp-crumbs" />
+      <div class="rp-hero">
+        <span class="kicker">Intercity corridor · {d.distanceKm >= 1500 ? 'Long haul' : 'Express corridor'}</span>
+        <h1>Packers and Movers from {fromName} to {toName}</h1>
+        <p class="rp-sub">{d.notes}</p>
+        <div class="rstats">
+          <div class="rstat"><span>Distance</span><b>~{d.distanceKm.toLocaleString('en-IN')} km</b></div>
+          <div class="rstat"><span>Transit time</span><b>{d.transitDays[0]}–{d.transitDays[1]} days</b></div>
+          <div class="rstat"><span>Survey</span><b>Free — video or doorstep</b></div>
+          <div class="rstat"><span>Advance</span><b>None to book</b></div>
+        </div>
+        <div class="rp-cta">
+          <WhatsAppButton route={{ from: fromName, to: toName }} variant="white" label={`WhatsApp: “${fromName} to ${toName} move”`} />
+          <PhoneNumber class="btn btn--outline-w" withIcon dark />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── What the corridor quote covers ── */}
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">One written quote, everything inside</span>
+      <h2 class="flat-h">What your {fromName} to {toName} quote covers</h2>
+      <p class="flat-p">We don't publish corridor rate tables because no two inventories are alike. After a free survey you get one written, itemised document for this corridor — and that number stays valid for your moving date.</p>
+      <div class="tbl-scroll" role="region" aria-label="What the quote covers" tabindex="0">
+        <table class="tbl">
+          <thead><tr><th>Move item</th><th>How it's handled</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Household goods</strong></td><td>Full packing, sealed loading in {fromName}, room-wise unloading in {toName}; shared-load options available for compact homes</td></tr>
+            <tr><td><strong>Car</strong></td><td>Dedicated car carrier with condition reports at both ends</td></tr>
+            <tr><td><strong>Bike</strong></td><td>Crated; can travel in the same truck as your household goods</td></tr>
+            <tr><td><strong>Transit insurance</strong></td><td>Declared-value cover, arranged before loading day</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Modes / price drivers / tolls ── */}
+  <section class="section section--tint">
+    <div class="wrap rp-grid3">
+      <div class="card card--pad-s">
+        <span class="rp-ic"><Icon name="box" size={19} /></span>
+        <h3>Moving modes on this route</h3>
+        <ul class="rp-list">{d.modes.map((m) => <li><Icon name="check" size={14} />{MODE_LABELS[m]}</li>)}</ul>
+      </div>
+      <div class="card card--pad-s">
+        <span class="rp-ic"><Icon name="receipt" size={19} /></span>
+        <h3>What affects the price</h3>
+        <ul class="rp-list">
+          <li><Icon name="check" size={14} />Inventory volume and packing level</li>
+          <li><Icon name="check" size={14} />Floor access and lift availability at both ends</li>
+          <li><Icon name="check" size={14} />Move date — month-ends and peak season</li>
+          <li><Icon name="check" size={14} />Dedicated vs shared truck</li>
+        </ul>
+      </div>
+      <div class="card card--pad-s">
+        <span class="rp-ic"><Icon name="shield" size={19} /></span>
+        <h3>Tolls &amp; permits, disclosed</h3>
+        <p class="rp-p">{d.tollsAndPermits}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── How this move runs ── */}
+  <section class="section">
+    <div class="wrap rp-how">
+      <span class="kicker">The schedule</span>
+      <h2 class="flat-h">How a {fromName} → {toName} move actually runs</h2>
+      <ol class="rp-steps">
+        <li><strong>Loading day ({fromName}).</strong> Supervisor-led packing and sealed loading in {fromCity?.data.hasBranch ? 'our' : 'the'} planned window — your inventory list is signed before the truck leaves.</li>
+        <li><strong>Transit ({d.transitDays[0]}–{d.transitDays[1]} days).</strong> The truck runs the corridor with planned halts; your coordinator updates you at each milestone — you never chase.</li>
+        <li><strong>Delivery ({toName}).</strong> Arrival is timed for the destination society's permitted hours; cartons are placed room-wise and the bill matches the written quote.</li>
+      </ol>
+      <div class="card rp-quote-card">
+        <LeadForm
+          client:load
+          heading="Plan this move"
+          context={{ source: `route:${d.from}-to-${d.to}`, fromCity: fromName, fromState: fromCity?.data.state ?? '', toCity: toName, toState: toCity?.data.state ?? '' }}
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* ── FAQ ── */}
+  <section class="section section--tint">
+    <div class="wrap">
+      <FAQAccordion
+        faqs={d.faqs}
+        heading={`${fromName} to ${toName} — FAQ`}
+        intro="Corridor-specific answers. Broader questions live in the main FAQ."
+      />
+    </div>
+  </section>
+
+  {/* ── Endpoint city links + related routes ── */}
+  <section class="section">
+    <div class="wrap rp-links">
+      <div class="card card--pad-s rp-end">
+        <h3>At the {fromName} end</h3>
+        <p>Local rules, society guidance and moving tips for {fromName}.</p>
+        <a class="sec-link" href={`/packers-and-movers-${d.from}/`}>Packers and Movers in {fromName} →</a>
+      </div>
+      <div class="card card--pad-s rp-end">
+        <h3>At the {toName} end</h3>
+        <p>Local rules, society guidance and moving tips for {toName}.</p>
+        <a class="sec-link" href={`/packers-and-movers-${d.to}/`}>Packers and Movers in {toName} →</a>
+      </div>
+      <div class="rp-related">
+        <h3>Related corridors</h3>
+        <div class="rp-rel-list">
+          {relatedRoutes.map(async (r) => (
+            <a href={`/packers-and-movers-${r.data.from}-to-${r.data.to}/`}>
+              {(await getCity(r.data.from))?.data.name} → {(await getCity(r.data.to))?.data.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    heading={`Ready to plan your ${fromName} → ${toName} move?`}
+    sub="WhatsApp the route and your home size — a written quote after a free survey."
+    route={{ from: fromName, to: toName }}
+    quoteHref="#lead-form"
+  />
+</BaseLayout>
+
+<style>
+  .rp-hero-wrap { padding: 22px 0 34px; background: var(--color-grey-25); }
+  .rp-crumbs { margin-bottom: 18px; }
+  .rp-hero {
+    background: linear-gradient(160deg, var(--color-ink-800), var(--color-ink-850));
+    border-radius: var(--radius-m); padding: clamp(24px, 4vw, 44px); color: #fff;
+    position: relative; overflow: hidden;
+  }
+  .rp-hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(120, 160, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 160, 255, 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .rp-hero > * { position: relative; }
+  .rp-hero h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.03em; max-width: 26ch; margin-top: 12px; }
+  .rp-sub { color: #9fb0ce; font-size: 0.92rem; max-width: 66ch; margin-top: 12px; }
+  .rstats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 22px; }
+  .rstat { border: 1px solid rgba(147, 183, 255, 0.3); background: rgba(9, 17, 40, 0.5); border-radius: var(--radius-s); padding: 16px; }
+  .rstat b { display: block; font-size: 1.02rem; color: #fff; font-variant-numeric: tabular-nums; }
+  .rstat span { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: #8fb0ff; font-weight: 600; }
+  @media (max-width: 720px) { .rstats { grid-template-columns: 1fr 1fr; } }
+  .rp-cta { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+
+  .flat-h { font-size: clamp(1.4rem, 2.6vw, 1.85rem); letter-spacing: -0.025em; margin-top: 12px; }
+  .flat-p { color: var(--color-slate-500); font-size: 0.92rem; margin: 10px 0 18px; max-width: 68ch; }
+  .sec-link { color: var(--color-blue-600); font-weight: 600; font-size: 0.9rem; }
+
+  .rp-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+  .rp-grid3 h3 { font-size: 0.96rem; margin-bottom: 8px; }
+  .rp-ic { width: 40px; height: 40px; display: grid; place-items: center; border: 1.5px solid var(--color-ink-900); border-radius: var(--radius-s); margin-bottom: 14px; }
+  .rp-list { list-style: none; display: grid; gap: 8px; font-size: 0.84rem; color: var(--color-slate-500); }
+  .rp-list li { display: flex; gap: 8px; align-items: flex-start; }
+  .rp-list svg { flex: none; color: var(--color-blue-600); margin-top: 3px; }
+  .rp-p { font-size: 0.84rem; color: var(--color-slate-500); }
+  @media (max-width: 860px) { .rp-grid3 { grid-template-columns: 1fr; } }
+
+  .rp-how { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(20px, 3.5vw, 40px); align-items: start; }
+  .rp-how .kicker, .rp-how .flat-h { grid-column: 1; }
+  .rp-steps { grid-column: 1; margin: 18px 0 0; padding-left: 1.2em; color: var(--color-slate-500); font-size: 0.92rem; display: grid; gap: 12px; }
+  .rp-steps strong { color: var(--color-ink-900); }
+  .rp-quote-card { grid-column: 2; grid-row: 1 / span 3; padding: 14px; min-width: 0; overflow: visible; }
+  @media (max-width: 860px) { .rp-how { grid-template-columns: 1fr; } .rp-quote-card { grid-column: 1; grid-row: auto; } }
+
+  .rp-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: stretch; }
+  .rp-end h3, .rp-related h3 { font-size: 0.96rem; margin-bottom: 6px; }
+  .rp-end p { font-size: 0.84rem; color: var(--color-slate-500); margin-bottom: 10px; }
+  .rp-rel-list { display: grid; gap: 8px; margin-top: 8px; }
+  .rp-rel-list a {
+    display: block; border: 1px solid var(--color-line); border-radius: var(--radius-xs);
+    padding: 10px 14px; font-size: 0.86rem; font-weight: 600; background: #fff;
+  }
+  .rp-rel-list a:hover { border-color: var(--color-blue-600); }
+  @media (max-width: 860px) { .rp-links { grid-template-columns: 1fr; } }
+</style>
